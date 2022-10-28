@@ -14,8 +14,8 @@
 #include <vector>
 
 /**
- * CBaseChainParams defines the base parameters (shared between __decenomy__-cli and __decenomy__d)
- * of a given instance of the __decenomy__ system.
+ * CBaseChainParams defines the base parameters (shared between lats-cli and latsd)
+ * of a given instance of the LATS system.
  */
 class CBaseChainParams
 {

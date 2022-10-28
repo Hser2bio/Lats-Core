@@ -10,14 +10,16 @@
 #include "txdb.h"
 #include "wallet/wallet.h"
 
-bool CPivStake::InitFromTxIn(const CTxIn& txin)
+CPivStake* CPivStake::NewPivStake(const CTxIn& txin)
 {
     // Find the previous transaction in database
     uint256 hashBlock;
     CTransaction txPrev;
-    if (!GetTransaction(txin.prevout.hash, txPrev, hashBlock, true))
-        return error("%s : INFO: read txPrev failed, tx id prev: %s", __func__, txin.prevout.hash.GetHex());
-    SetPrevout(txPrev, txin.prevout.n);
+    if (!GetTransaction(txin.prevout.hash, txPrev, hashBlock, true)) {
+        error("%s : INFO: read txPrev failed, tx id prev: %s", __func__, txin.prevout.hash.GetHex());
+        return nullptr;
+    }
+    const CBlockIndex* pindexFrom = nullptr;
 
     // Find the index of the block of the previous transaction
     if (mapBlockIndex.count(hashBlock)) {
@@ -25,52 +27,37 @@ bool CPivStake::InitFromTxIn(const CTxIn& txin)
         if (chainActive.Contains(pindex)) pindexFrom = pindex;
     }
     // Check that the input is in the active chain
-    if (!pindexFrom)
-        return error("%s : Failed to find the block index for stake origin", __func__);
-
-    // All good
-    return true;
-}
-
-bool CPivStake::SetPrevout(CTransaction txPrev, unsigned int n)
-{
-    this->txFrom = txPrev;
-    this->nPosition = n;
-    return true;
-}
-
-bool CPivStake::GetTxFrom(CTransaction& tx) const
-{
-    if (txFrom.IsNull())
-        return false;
-    tx = txFrom;
-    return true;
+    if (!pindexFrom) {
+        error("%s : Failed to find the block index for stake origin", __func__);
+        return nullptr;
+    }
+    return new CPivStake(txPrev.vout[txin.prevout.n],
+                          txin.prevout,
+                          pindexFrom);
 }
 
 bool CPivStake::GetTxOutFrom(CTxOut& out) const
 {
-    if (txFrom.IsNull() || nPosition >= txFrom.vout.size())
-        return false;
-    out = txFrom.vout[nPosition];
+    out = outputFrom;
     return true;
 }
 
 bool CPivStake::CreateTxIn(CWallet* pwallet, CTxIn& txIn, uint256 hashTxOut)
 {
-    txIn = CTxIn(txFrom.GetHash(), nPosition);
+    txIn = CTxIn(outpointFrom.hash, outpointFrom.n);
     return true;
 }
 
 CAmount CPivStake::GetValue() const
 {
-    return txFrom.vout[nPosition].nValue;
+    return outputFrom.nValue;
 }
 
 bool CPivStake::CreateTxOuts(CWallet* pwallet, std::vector<CTxOut>& vout, CAmount nTotal, const bool onlyP2PK)
 {
     std::vector<valtype> vSolutions;
     txnouttype whichType;
-    CScript scriptPubKeyKernel = txFrom.vout[nPosition].scriptPubKey;
+    CScript scriptPubKeyKernel = outputFrom.scriptPubKey;
     if (!Solver(scriptPubKeyKernel, whichType, vSolutions))
         return error("%s: failed to parse kernel", __func__);
 
@@ -117,29 +104,17 @@ bool CPivStake::CreateTxOuts(CWallet* pwallet, std::vector<CTxOut>& vout, CAmoun
 
 CDataStream CPivStake::GetUniqueness() const
 {
-    //The unique identifier for a __DSW__ stake is the outpoint
+    //The unique identifier for a LATS stake is the outpoint
     CDataStream ss(SER_NETWORK, 0);
-    ss << nPosition << txFrom.GetHash();
+    ss << outpointFrom.n << outpointFrom.hash;
     return ss;
 }
 
 //The block that the UTXO was added to the chain
-CBlockIndex* CPivStake::GetIndexFrom()
+const CBlockIndex* CPivStake::GetIndexFrom() const
 {
-    if (pindexFrom)
-        return pindexFrom;
-    uint256 hashBlock = UINT256_ZERO;
-    CTransaction tx;
-    if (GetTransaction(txFrom.GetHash(), tx, hashBlock, true)) {
-        // If the index is in the chain, then set it as the "index from"
-        if (mapBlockIndex.count(hashBlock)) {
-            CBlockIndex* pindex = mapBlockIndex.at(hashBlock);
-            if (chainActive.Contains(pindex))
-                pindexFrom = pindex;
-        }
-    } else {
-        LogPrintf("%s : failed to find tx %s\n", __func__, txFrom.GetHash().GetHex());
-    }
+    // Sanity check, pindexFrom is set on the constructor.
+    if (!pindexFrom) throw std::runtime_error("CPivStake: uninitialized pindexFrom");
 
     return pindexFrom;
 }
@@ -149,7 +124,7 @@ bool CPivStake::ContextCheck(int nHeight, uint32_t nTime)
 {
     const Consensus::Params& consensus = Params().GetConsensus();
     // Get Stake input block time/height
-    CBlockIndex* pindexFrom = GetIndexFrom();
+    const CBlockIndex* pindexFrom = GetIndexFrom();
     if (!pindexFrom)
         return error("%s: unable to get previous index for stake input", __func__);
     const int nHeightBlockFrom = pindexFrom->nHeight;

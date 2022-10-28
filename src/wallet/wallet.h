@@ -85,6 +85,7 @@ extern const char * DEFAULT_WALLET_DAT;
 class CAccountingEntry;
 class CCoinControl;
 class COutput;
+class CStakeableOutput;
 class CReserveKey;
 class CScript;
 class CWalletTx;
@@ -255,6 +256,20 @@ private:
 
     bool IsKeyUsed(const CPubKey& vchPubKey);
 
+    struct OutputAvailabilityResult
+    {
+        bool available{false};
+        bool solvable{false};
+        bool spendable{false};
+    };
+
+    OutputAvailabilityResult CheckOutputAvailability(const CTxOut& output,
+                                                    const unsigned int outIndex,
+                                                    const uint256& wtxid,
+                                                    AvailableCoinsType nCoinType,
+                                                    const CCoinControl* coinControl,
+                                                    const bool fCoinsSelected) const;
+
 
 public:
 
@@ -300,7 +315,7 @@ public:
     // Staker status (last hashed block and time)
     CStakerStatus* pStakerStatus = nullptr;
 
-    // User-defined fee __DSW__/kb
+    // User-defined fee LATS/kb
     bool fUseCustomFee;
     CAmount nCustomFee;
 
@@ -351,13 +366,14 @@ public:
     bool AvailableCoins(std::vector<COutput>* pCoins,   // --> populates when != nullptr
                         const CCoinControl* coinControl = nullptr,
                         AvailableCoinsType nCoinType    = ALL_COINS,
-                        bool fOnlyConfirmed             = true
+                        bool fOnlyConfirmed             = true,
+                        bool fUseIX                     = false
                         ) const;
     //! >> Available coins (spending)
     bool SelectCoinsToSpend(const std::vector<COutput>& vAvailableCoins, const CAmount& nTargetValue, std::set<std::pair<const CWalletTx*, unsigned int> >& setCoinsRet, CAmount& nValueRet, const CCoinControl* coinControl = nullptr) const;
     bool SelectCoinsMinConf(const CAmount& nTargetValue, int nConfMine, int nConfTheirs, std::vector<COutput> vCoins, std::set<std::pair<const CWalletTx*, unsigned int> >& setCoinsRet, CAmount& nValueRet) const;
     //! >> Available coins (staking)
-    bool StakeableCoins(std::vector<COutput>* pCoins = nullptr);
+    bool StakeableCoins(std::vector<CStakeableOutput>* pCoins = nullptr);
 
     std::map<CTxDestination, std::vector<COutput> > AvailableCoinsByAddress(bool fConfirmed = true, CAmount maxCoinValue = 0);
 
@@ -367,6 +383,7 @@ public:
     /// Extract txin information and keys from output
     bool GetVinAndKeysFromOutput(COutput out, CTxIn& txinRet, CPubKey& pubKeyRet, CKey& keyRet);
 
+    bool IsSpent(const COutPoint& outpoint) const;
     bool IsSpent(const uint256& hash, unsigned int n) const;
 
     bool IsLockedCoin(const uint256& hash, unsigned int n) const;
@@ -497,7 +514,7 @@ public:
                          unsigned int nBits,
                          CMutableTransaction& txNew,
                          int64_t& nTxNewTime,
-                         std::vector<COutput>* availableCoins);
+                         std::vector<CStakeableOutput>* availableCoins);
     bool MultiSend();
     void AutoCombineDust(CConnman* connman);
 
@@ -868,6 +885,16 @@ public:
 
     CAmount Value() const { return tx->vout[i].nValue; }
     std::string ToString() const;
+};
+
+class CStakeableOutput : public COutput
+{
+public:
+    const CBlockIndex* pindex{nullptr};
+
+    CStakeableOutput(const CWalletTx* txIn, int iIn, int nDepthIn, bool fSpendableIn, bool fSolvableIn,
+                    const CBlockIndex*& pindex);
+
 };
 
 

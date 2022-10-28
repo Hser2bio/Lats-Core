@@ -298,7 +298,7 @@ void CMasternodePayments::FillBlockPayee(CMutableTransaction& txNew, const CBloc
     }
 
     if (hasPayment) {
-        CAmount masternodePayment = CMasternode::GetMasternodePayment(pindexPrev->nHeight + 1);
+        CAmount masternodePayment = CMasternode::GetMasternodePayment();
         if (fProofOfStake) {
             /**For Proof Of Stake vout[0] must be null
              * Stake reward can be split into many different outputs, so we must
@@ -559,7 +559,7 @@ bool CMasternodeBlockPayees::HasPaidPayee(const CScript& payee) {
             CTransaction tx = block.vtx[block.IsProofOfWork() ? 0 : 1];
 
             for (CTxOut out : tx.vout) {
-                if (out.nValue == CMasternode::GetMasternodePayment(nBlockHeight)
+                if (out.nValue == CMasternode::GetMasternodePayment()
                 ) {
                     paidPayee = out.scriptPubKey;
                 }
@@ -607,7 +607,7 @@ bool CMasternodeBlockPayees::IsTransactionValid(const CTransaction& txNew, int n
     }
 
     std::string strPayeesPossible = "";
-    CAmount requiredMasternodePayment = CMasternode::GetMasternodePayment(nBlockHeight);
+    CAmount requiredMasternodePayment = CMasternode::GetMasternodePayment();
 
     for (CMasternodePayee& payee : vecPayments) {
         bool found = false;

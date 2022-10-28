@@ -121,7 +121,7 @@ bool CreateCoinbaseTx(CBlock* pblock, const CScript& scriptPubKeyIn, CBlockIndex
     return true;
 }
 
-bool SolveProofOfStake(CBlock* pblock, CBlockIndex* pindexPrev, CWallet* pwallet, std::vector<COutput>* availableCoins)
+bool SolveProofOfStake(CBlock* pblock, CBlockIndex* pindexPrev, CWallet* pwallet, std::vector<CStakeableOutput>* availableCoins)
 {
     boost::this_thread::interruption_point();
     pblock->nBits = GetNextWorkRequired(pindexPrev, pblock);
@@ -143,7 +143,7 @@ bool SolveProofOfStake(CBlock* pblock, CBlockIndex* pindexPrev, CWallet* pwallet
     return true;
 }
 
-CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, bool fProofOfStake, std::vector<COutput>* availableCoins)
+CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, bool fProofOfStake, std::vector<CStakeableOutput>* availableCoins) 
 {
     // Create new block
     std::unique_ptr<CBlockTemplate> pblocktemplate(new CBlockTemplate());
@@ -409,7 +409,11 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, CWallet* pwallet, 
         }
 
         CValidationState state;
-        if (!TestBlockValidity(state, *pblock, pindexPrev, false, false)) {
+        bool fTestValidity = true;
+        if (pindexPrev->nHeight <= 1000) {
+            bool fTestValidity = false;
+        }
+        if (fTestValidity && !TestBlockValidity(state, *pblock, pindexPrev, false, false)) {
             LogPrintf("CreateNewBlock() : TestBlockValidity failed\n");
             mempool.clear();
             return nullptr;
@@ -502,24 +506,27 @@ bool ProcessBlockFound(CBlock* pblock, CWallet& wallet, Optional<CReserveKey>& r
 bool fGenerateBitcoins = false;
 bool fStakeableCoins = false;
 bool fMasternodeSync = false;
-int nMintableLastCheck = 0;
 
-void CheckForCoins(CWallet* pwallet, const int minutes, std::vector<COutput>* availableCoins)
+void CheckForCoins(CWallet* pwallet, std::vector<CStakeableOutput>* availableCoins)
 {
-    //control the amount of times the client will check for mintable coins
-    int nTimeNow = GetTime();
-    if ((nTimeNow - nMintableLastCheck > minutes * 60)) {
-        nMintableLastCheck = nTimeNow;
-        fStakeableCoins = pwallet->StakeableCoins(availableCoins);
-        fMasternodeSync = sporkManager.IsSporkActive(SPORK_106_STAKING_SKIP_MN_SYNC) || !masternodeSync.NotCompleted();
+    if (!pwallet)
+        return;
+
+    // control the amount of times the client will check for mintable coins (every block)
+    {
+        WAIT_LOCK(g_best_block_mutex, lock);
+        if (g_best_block == pwallet->pStakerStatus->GetLastHash())
+            return;
     }
+    fStakeableCoins = pwallet->StakeableCoins(availableCoins);
+    fMasternodeSync = sporkManager.IsSporkActive(SPORK_106_STAKING_SKIP_MN_SYNC) || !masternodeSync.NotCompleted();
 }
 
 void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
 {
     LogPrintf("Miner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
-    util::ThreadRename("pivx-miner");
+    util::ThreadRename("lats-miner");
     const Consensus::Params& consensus = Params().GetConsensus();
     const int64_t nSpacingMillis = consensus.nTargetSpacing * 1000;
 
@@ -530,7 +537,7 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
     }
 
     // Available UTXO set
-    std::vector<COutput> availableCoins;
+    std::vector<CStakeableOutput> availableCoins;
     unsigned int nExtraNonce = 0;
 
     while (fGenerateBitcoins || fProofOfStake) {
@@ -547,12 +554,12 @@ void BitcoinMiner(CWallet* pwallet, bool fProofOfStake)
             }
 
             // update fStakeableCoins (5 minute check time);
-            CheckForCoins(pwallet, 5, &availableCoins);
+            CheckForCoins(pwallet, &availableCoins);
 
             while ((g_connman && g_connman->GetNodeCount(CConnman::CONNECTIONS_ALL) == 0 && Params().MiningRequiresPeers()) || pwallet->IsLocked() || !fStakeableCoins || !fMasternodeSync) {
                 MilliSleep(5000);
-                // Do a separate 1 minute check here to ensure fStakeableCoins and fMasternodeSync is updated
-                if (!fStakeableCoins || !fMasternodeSync) CheckForCoins(pwallet, 1, &availableCoins);
+                // Do another check here to ensure fStakeableCoins and fMasternodeSync is updated
+                if (!fStakeableCoins || !fMasternodeSync) CheckForCoins(pwallet, &availableCoins);
             }
 
             //search our map of hashed blocks, see if bestblock has been hashed yet

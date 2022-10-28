@@ -43,7 +43,7 @@ CStakeKernel::CStakeKernel(const CBlockIndex* const pindexPrev, CStakeInput* sta
         // Modifier v2
         stakeModifier << pindexPrev->GetStakeModifierV2();
     }
-    CBlockIndex* pindexFrom = stakeInput->GetIndexFrom();
+    const CBlockIndex* pindexFrom = stakeInput->GetIndexFrom();
     nTimeBlockFrom = pindexFrom->nTime;
 }
 
@@ -106,9 +106,9 @@ bool LoadStakeInput(const CBlock& block, const CBlockIndex* pindexPrev, std::uni
 
     // Construct the stakeinput object
     const CTxIn& txin = block.vtx[1].vin[0];
-    stake = std::unique_ptr<CStakeInput>(new CPivStake());
+    stake = std::unique_ptr<CStakeInput>(CPivStake::NewPivStake(txin));
 
-    return stake->InitFromTxIn(txin);
+    return stake && stake->InitFromTxIn(txin);
 }
 
 /*

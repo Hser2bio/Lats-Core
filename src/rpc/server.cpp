@@ -266,11 +266,11 @@ UniValue stop(const JSONRPCRequest& jsonRequest)
     if (jsonRequest.fHelp || jsonRequest.params.size() > 1)
         throw std::runtime_error(
             "stop\n"
-            "\nStop __Decenomy__ server.");
+            "\nStop LATS server.");
     // Event loop will exit after current HTTP requests have been handled, so
     // this reply will get back to the client.
     StartShutdown();
-    return "__Decenomy__ server stopping";
+    return "LATS server stopping";
 }
 
 
@@ -359,22 +359,22 @@ static const CRPCCommand vRPCCommands[] =
         { "hidden",             "waitforblock",           &waitforblock,           true },
         { "hidden",             "waitforblockheight",     &waitforblockheight,     true },
 
-        /* __DSW__ features */
-        {"__decenomy__", "listmasternodes", &listmasternodes, true },
-        {"__decenomy__", "getmasternodecount", &getmasternodecount, true },
-        {"__decenomy__", "createmasternodebroadcast", &createmasternodebroadcast, true },
-        {"__decenomy__", "decodemasternodebroadcast", &decodemasternodebroadcast, true },
-        {"__decenomy__", "relaymasternodebroadcast", &relaymasternodebroadcast, true },
-        {"__decenomy__", "masternodecurrent", &masternodecurrent, true },
-        {"__decenomy__", "startmasternode", &startmasternode, true },
-        {"__decenomy__", "createmasternodekey", &createmasternodekey, true },
-        {"__decenomy__", "getmasternodeoutputs", &getmasternodeoutputs, true },
-        {"__decenomy__", "listmasternodeconf", &listmasternodeconf, true },
-        {"__decenomy__", "getmasternodestatus", &getmasternodestatus, true },
-        {"__decenomy__", "getmasternodewinners", &getmasternodewinners, true },
-        {"__decenomy__", "getmasternodescores", &getmasternodescores, true },
-        {"__decenomy__", "mnsync", &mnsync, true },
-        {"__decenomy__", "spork", &spork, true },
+        /* LATS features */
+        {"LATS", "listmasternodes", &listmasternodes, true },
+        {"LATS", "getmasternodecount", &getmasternodecount, true },
+        {"LATS", "createmasternodebroadcast", &createmasternodebroadcast, true },
+        {"LATS", "decodemasternodebroadcast", &decodemasternodebroadcast, true },
+        {"LATS", "relaymasternodebroadcast", &relaymasternodebroadcast, true },
+        {"LATS", "masternodecurrent", &masternodecurrent, true },
+        {"LATS", "startmasternode", &startmasternode, true },
+        {"LATS", "createmasternodekey", &createmasternodekey, true },
+        {"LATS", "getmasternodeoutputs", &getmasternodeoutputs, true },
+        {"LATS", "listmasternodeconf", &listmasternodeconf, true },
+        {"LATS", "getmasternodestatus", &getmasternodestatus, true },
+        {"LATS", "getmasternodewinners", &getmasternodewinners, true },
+        {"LATS", "getmasternodescores", &getmasternodescores, true },
+        {"LATS", "mnsync", &mnsync, true },
+        {"LATS", "spork", &spork, true },
 
 #ifdef ENABLE_WALLET
         /* Wallet */
@@ -572,7 +572,7 @@ std::vector<std::string> CRPCTable::listCommands() const
 
 std::string HelpExampleCli(std::string methodname, std::string args)
 {
-    return "> __decenomy__-cli " + methodname + " " + args + "\n";
+    return "> lats-cli " + methodname + " " + args + "\n";
 }
 
 std::string HelpExampleRpc(std::string methodname, std::string args)

@@ -101,6 +101,8 @@ struct Params {
     int64_t nTargetTimespanV2;
     int64_t nTargetSpacing;
     int nTimeSlotLength;
+    CAmount nMNCollateralAmt;
+    CAmount nMNBlockReward;
 
     // burn addresses
     std::map<std::string, int> mBurnAddresses = {};
