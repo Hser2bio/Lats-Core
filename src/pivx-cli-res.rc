@@ -17,13 +17,13 @@ BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
             VALUE "CompanyName",        "LATS"
-            VALUE "FileDescription",    "lats-cli (OSS RPC client for LATS)"
+            VALUE "FileDescription",    "Lats-cli (OSS RPC client for LATS)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "lats-cli"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT/X11 software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
             VALUE "OriginalFilename",   "lats-cli.exe"
-            VALUE "ProductName",        "lats-cli"
+            VALUE "ProductName",        "Lats-cli"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END
