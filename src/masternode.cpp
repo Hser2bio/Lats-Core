@@ -377,12 +377,6 @@ CAmount CMasternode::GetBlockValue(int nHeight)
         return nBlockValue;
     }
 
-    // Testnet high-inflation blocks [2, 200] with value 250k LATS
-    const bool isTestnet = Params().IsTestnet();
-    if (isTestnet && nHeight < 201 && nHeight > 1) {
-        nBlockValue = 250000 * COIN;
-        return nBlockValue;
-    }
     nBlockValue = 100 * COIN;
     if (nHeight >= 1 && nHeight <= 1000)       return nBlockValue;
 
