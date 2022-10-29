@@ -10,7 +10,7 @@
 #include "qt/pivx/tooltipmenu.h"
 
 #include "qt/pivx/addnewcontactdialog.h"
-#include "qt/pivx/pivxgui.h"
+#include "qt/pivx/latsgui.h"
 #include "guiutil.h"
 #include "qt/pivx/qtutils.h"
 #include "walletmodel.h"

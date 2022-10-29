@@ -9,7 +9,7 @@
 #include "config/lats-config.h"
 #endif
 
-#include "qt/pivx/pivxgui.h"
+#include "qt/pivx/latsgui.h"
 
 #include "clientmodel.h"
 #include "guiconstants.h"

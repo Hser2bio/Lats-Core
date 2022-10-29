@@ -175,7 +175,7 @@ BITCOIN_QT_H = \
   qt/askpassphrasedialog.h \
   qt/bantablemodel.h \
   qt/bitcoinaddressvalidator.h \
-  qt/pivx/pivxgui.h \
+  qt/pivx/latsgui.h \
   qt/bitcoinunits.h \
   qt/clientmodel.h \
   qt/coincontroldialog.h \
