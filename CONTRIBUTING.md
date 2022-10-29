@@ -1,7 +1,7 @@
-Contributing to LATS Core
+Contributing to Lats Core
 ============================
 
-The LATS Core project operates an open contributor model where anyone is
+The Lats Core project operates an open contributor model where anyone is
 welcome to contribute towards development in the form of peer review, testing
 and patches. This document explains the practical process and guidelines for
 contributing.
@@ -64,7 +64,7 @@ the pull request affects. Valid areas as:
   - *Net* or *P2P* for changes to the peer-to-peer network code
   - *RPC/REST* for changes to the RPC or REST APIs
   - *Scripts and tools* for changes to the scripts and tools
-  - *Tests* for changes to the LATS Coreunit tests or QA tests
+  - *Tests* for changes to the Lats Coreunit tests or QA tests
   - *Trivial* should **only** be used for PRs that do not change generated
     executable code. Notably, refactors (change of function arguments and code
     reorganization) and changes in behavior should **not** be marked as trivial.
@@ -203,10 +203,10 @@ workload on reviewing.
 "Decision Making" Process
 -------------------------
 
-The following applies to code changes to the LATS Core project, and is not to be
+The following applies to code changes to the Lats Core project, and is not to be
 confused with overall LATS Network Protocol consensus changes.
 
-Whether a pull request is merged into LATS Core rests with the project merge
+Whether a pull request is merged into Lats Core rests with the project merge
 maintainers and ultimately the project lead.
 
 Maintainers will take into consideration if a patch is in line with the general
@@ -303,7 +303,7 @@ about:
 Release Policy
 --------------
 
-The project leader is the release manager for each LATS Core release.
+The project leader is the release manager for each Lats Core release.
 
 Copyright
 ---------

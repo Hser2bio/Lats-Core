@@ -20,13 +20,13 @@ BEGIN
         BLOCK "040904E4" // U.S. English - multilingual (hex)
         BEGIN
             VALUE "CompanyName",        "LATS"
-            VALUE "FileDescription",    "LATS Core (OSS GUI client for LATS)"
+            VALUE "FileDescription",    "Lats Core (OSS GUI client for LATS)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "lats-qt"
             VALUE "LegalCopyright",     COPYRIGHT_STR
             VALUE "LegalTrademarks1",   "Distributed under the MIT/X11 software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
             VALUE "OriginalFilename",   "lats-qt.exe"
-            VALUE "ProductName",        "LATS Core"
+            VALUE "ProductName",        "Lats Core"
             VALUE "ProductVersion",     VER_PRODUCTVERSION_STR
         END
     END
