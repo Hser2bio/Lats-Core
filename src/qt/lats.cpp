@@ -542,7 +542,7 @@ int main(int argc, char* argv[])
 
 /// 2. Basic Qt initialization (not dependent on parameters or configuration)
     Q_INIT_RESOURCE(lats_locale);
-    Q_INIT_RESOURCE(lats);
+    Q_INIT_RESOURCE(pivx);
 
     //TODO to set this up we need to review all the UI measurements to be relative to the screen DPI
     // Generate high-dpi pixmaps
