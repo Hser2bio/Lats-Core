@@ -445,13 +445,13 @@ nodist_libbitcoin_util_a_SOURCES = $(srcdir)/obj/build.h
 #
 
 # latsd binary #
-latsd_SOURCES = pivxd.cpp
+latsd_SOURCES = latsd.cpp
 latsd_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
 latsd_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
 latsd_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-latsd_SOURCES += pivxd-res.rc
+latsd_SOURCES += latsd-res.rc
 endif
 latsd_LDADD = \
   $(LIBBITCOIN_SERVER) \
@@ -469,42 +469,42 @@ latsd_LDADD = \
 latsd_LDADD += $(BOOST_LIBS) $(BDB_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(MINIUPNPC_LIBS) $(EVENT_PTHREADS_LIBS) $(EVENT_LIBS) $(ZMQ_LIBS)
 
 # lats-cli binary #
-LATS_cli_SOURCES = pivx-cli.cpp
-LATS_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
-LATS_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-LATS_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+lats_cli_SOURCES = lats-cli.cpp
+lats_cli_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES) $(EVENT_CFLAGS)
+lats_cli_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+lats_cli_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-LATS_cli_SOURCES += pivx-cli-res.rc
+lats_cli_SOURCES += lats-cli-res.rc
 endif
 
-LATS_cli_LDADD = \
+lats_cli_LDADD = \
   $(LIBBITCOIN_CLI) \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO)
 
-LATS_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
+lats_cli_LDADD += $(BOOST_LIBS) $(SSL_LIBS) $(CRYPTO_LIBS) $(EVENT_LIBS)
 #
 
 # lats-tx binary #
-LATS_tx_SOURCES = pivx-tx.cpp
-LATS_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
-LATS_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
-LATS_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
+lats_tx_SOURCES = lats-tx.cpp
+lats_tx_CPPFLAGS = $(AM_CPPFLAGS) $(BITCOIN_INCLUDES)
+lats_tx_CXXFLAGS = $(AM_CXXFLAGS) $(PIE_FLAGS)
+lats_tx_LDFLAGS = $(RELDFLAGS) $(AM_LDFLAGS) $(LIBTOOL_APP_LDFLAGS)
 
 if TARGET_WINDOWS
-LATS_tx_SOURCES += pivx-tx-res.rc
+lats_tx_SOURCES += lats-tx-res.rc
 endif
 
-LATS_tx_LDADD = \
+lats_tx_LDADD = \
   $(LIBUNIVALUE) \
   $(LIBBITCOIN_COMMON) \
   $(LIBBITCOIN_UTIL) \
   $(LIBBITCOIN_CRYPTO) \
   $(LIBSECP256K1)
 
-LATS_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
+lats_tx_LDADD += $(BOOST_LIBS) $(CRYPTO_LIBS)
 #
 
 # bitcoinconsensus library #
@@ -570,12 +570,12 @@ EXTRA_DIST =         \
   crypto/haval_helper.c
 
 
-config/pivx-config.h: config/stamp-h1
+config/lats-config.h: config/stamp-h1
 	@$(MAKE) -C $(top_builddir) $(subdir)/$(@)
-config/stamp-h1: $(top_srcdir)/$(subdir)/config/pivx-config.h.in $(top_builddir)/config.status
+config/stamp-h1: $(top_srcdir)/$(subdir)/config/lats-config.h.in $(top_builddir)/config.status
 	$(AM_V_at)$(MAKE) -C $(top_builddir) $(subdir)/$(@)
-$(top_srcdir)/$(subdir)/config/pivx-config.h.in:  $(am__configure_deps)
-	$(AM_V_at)$(MAKE) -C $(top_srcdir) $(subdir)/config/pivx-config.h.in
+$(top_srcdir)/$(subdir)/config/lats-config.h.in:  $(am__configure_deps)
+	$(AM_V_at)$(MAKE) -C $(top_srcdir) $(subdir)/config/lats-config.h.in
 
 clean-local:
 	-$(MAKE) -C secp256k1 clean

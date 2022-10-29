@@ -80,7 +80,7 @@ HEADERS += src/activemasternode.h \
            src/crypter.h \
            src/obfuscation-relay.h \
            src/obfuscation.h \
-           src/pivx-config.h \
+           src/lats-config.h \
            src/db.h \
            src/eccryptoverify.h \
            src/ecwrapper.h \
@@ -131,7 +131,7 @@ HEADERS += src/activemasternode.h \
            src/wallet_ismine.h \
            src/walletdb.h \
            src/compat/sanity.h \
-           src/config/pivx-config.h \
+           src/config/lats-config.h \
            src/crypto/common.h \
            src/crypto/google_authenticator.h \
            src/crypto/hmac_sha1.h \
@@ -377,8 +377,8 @@ SOURCES += src/activemasternode.cpp \
            src/crypter.cpp \
            src/obfuscation-relay.cpp \
            src/obfuscation.cpp \
-           src/pivx-cli.cpp \
-           src/pivx-tx.cpp \
+           src/lats-cli.cpp \
+           src/lats-tx.cpp \
            src/pivx.cpp \
            src/db.cpp \
            src/eccryptoverify.cpp \

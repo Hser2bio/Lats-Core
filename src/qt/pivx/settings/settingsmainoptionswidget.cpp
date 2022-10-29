@@ -8,7 +8,7 @@
 #include "QListView"
 
 #if defined(HAVE_CONFIG_H)
-#include "config/pivx-config.h"
+#include "config/lats-config.h"
 #endif
 
 #include "bitcoinunits.h"

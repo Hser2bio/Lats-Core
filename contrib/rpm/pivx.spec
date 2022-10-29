@@ -21,21 +21,21 @@ Summary:	Peer to Peer Cryptographic Currency
 Group:		Applications/System
 License:	MIT
 URL:		https://pivx.org/
-Source0:	https://pivx.org/bin/pivx-core-%{version}/pivx-%{version}.tar.gz
+Source0:	https://pivx.org/bin/lats-core-%{version}/lats-%{version}.tar.gz
 Source1:	http://download.oracle.com/berkeley-db/db-%{bdbv}.NC.tar.gz
 
-Source10:	https://raw.githubusercontent.com/pivx-project/pivx/v%{version}/contrib/debian/examples/pivx.conf
+Source10:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/debian/examples/pivx.conf
 
 #man pages
-Source20:	https://raw.githubusercontent.com/pivx-project/pivx/v%{version}/doc/man/pivxd.1
-Source21:	https://raw.githubusercontent.com/pivx-project/pivx/v%{version}/doc/man/pivx-cli.1
-Source22:	https://raw.githubusercontent.com/pivx-project/pivx/v%{version}/doc/man/pivx-qt.1
+Source20:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/doc/man/latsd.1
+Source21:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/doc/man/lats-cli.1
+Source22:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/doc/man/lats-qt.1
 
 #selinux
-Source30:	https://raw.githubusercontent.com/pivx-project/pivx/v%{version}/contrib/rpm/pivx.te
-# Source31 - what about pivx-tx and bench_pivx ???
-Source31:	https://raw.githubusercontent.com/pivx-project/pivx/v%{version}/contrib/rpm/pivx.fc
-Source32:	https://raw.githubusercontent.com/pivx-project/pivx/v%{version}/contrib/rpm/pivx.if
+Source30:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/rpm/pivx.te
+# Source31 - what about lats-tx and bench_pivx ???
+Source31:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/rpm/pivx.fc
+Source32:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/rpm/pivx.if
 
 Source100:	https://upload.wikimedia.org/wikipedia/commons/4/46/Bitcoin.svg
 
@@ -50,7 +50,7 @@ BuildRequires:	autoconf automake libtool
 BuildRequires:	libevent-devel
 
 
-Patch0:		pivx-0.12.0-libressl.patch
+Patch0:		lats-0.12.0-libressl.patch
 
 
 %description
@@ -114,7 +114,7 @@ Most people do not need this package installed.
 %package server
 Summary:	The pivx daemon
 Group:		System Environment/Daemons
-Requires:	pivx-utils = %{version}-%{release}
+Requires:	lats-utils = %{version}-%{release}
 Requires:	selinux-policy policycoreutils-python
 Requires(pre):	shadow-utils
 Requires(post):	%{_sbindir}/semodule %{_sbindir}/restorecon %{_sbindir}/fixfiles %{_sbindir}/sestatus
@@ -124,13 +124,13 @@ BuildRequires:	checkpolicy
 BuildRequires:	%{_datadir}/selinux/devel/Makefile
 
 %description server
-This package provides a stand-alone pivx-core daemon. For most users, this
+This package provides a stand-alone lats-core daemon. For most users, this
 package is only needed if they need a full-node without the graphical client.
 
 Some third party wallet software will want this package to provide the actual
-pivx-core node they use to connect to the network.
+lats-core node they use to connect to the network.
 
-If you use the graphical pivx-core client then you almost certainly do not
+If you use the graphical lats-core client then you almost certainly do not
 need this package.
 
 %package utils
@@ -139,13 +139,13 @@ Group:		Applications/System
 
 %description utils
 This package provides several command line utilities for interacting with a
-pivx-core daemon.
+lats-core daemon.
 
-The pivx-cli utility allows you to communicate and control a pivx daemon
-over RPC, the pivx-tx utility allows you to create a custom transaction, and
+The lats-cli utility allows you to communicate and control a pivx daemon
+over RPC, the lats-tx utility allows you to create a custom transaction, and
 the bench_pivx utility can be used to perform some benchmarks.
 
-This package contains utilities needed by the pivx-server package.
+This package contains utilities needed by the lats-server package.
 
 
 %prep
@@ -182,12 +182,12 @@ popd
 make install DESTDIR=%{buildroot}
 
 mkdir -p -m755 %{buildroot}%{_sbindir}
-mv %{buildroot}%{_bindir}/pivxd %{buildroot}%{_sbindir}/pivxd
+mv %{buildroot}%{_bindir}/latsd %{buildroot}%{_sbindir}/latsd
 
 # systemd stuff
 mkdir -p %{buildroot}%{_tmpfilesdir}
 cat <<EOF > %{buildroot}%{_tmpfilesdir}/pivx.conf
-d /run/pivxd 0750 pivx pivx -
+d /run/latsd 0750 pivx pivx -
 EOF
 touch -a -m -t 201504280000 %{buildroot}%{_tmpfilesdir}/pivx.conf
 
@@ -202,7 +202,7 @@ OPTIONS=""
 # Don't change these unless you know what you're doing.
 CONFIG_FILE="%{_sysconfdir}/pivx/pivx.conf"
 DATA_DIR="%{_localstatedir}/lib/pivx"
-PID_FILE="/run/pivxd/pivxd.pid"
+PID_FILE="/run/latsd/latsd.pid"
 EOF
 touch -a -m -t 201504280000 %{buildroot}%{_sysconfdir}/sysconfig/pivx
 
@@ -214,7 +214,7 @@ After=syslog.target network.target
 
 [Service]
 Type=forking
-ExecStart=%{_sbindir}/pivxd -daemon -conf=\${CONFIG_FILE} -datadir=\${DATA_DIR} -pid=\${PID_FILE} \$OPTIONS
+ExecStart=%{_sbindir}/latsd -daemon -conf=\${CONFIG_FILE} -datadir=\${DATA_DIR} -pid=\${PID_FILE} \$OPTIONS
 EnvironmentFile=%{_sysconfdir}/sysconfig/pivx
 User=pivx
 Group=pivx
@@ -262,14 +262,14 @@ touch %{buildroot}%{_datadir}/pixmaps/*.xpm -r %{SOURCE100}
 
 # Desktop File - change the touch timestamp if modifying
 mkdir -p %{buildroot}%{_datadir}/applications
-cat <<EOF > %{buildroot}%{_datadir}/applications/pivx-core.desktop
+cat <<EOF > %{buildroot}%{_datadir}/applications/lats-core.desktop
 [Desktop Entry]
 Encoding=UTF-8
 Name=Bitcoin
 Comment=Bitcoin P2P Cryptocurrency
 Comment[fr]=Bitcoin, monnaie virtuelle cryptographique pair à pair
 Comment[tr]=Bitcoin, eşten eşe kriptografik sanal para birimi
-Exec=pivx-qt %u
+Exec=lats-qt %u
 Terminal=false
 Type=Application
 Icon=pivx128
@@ -277,14 +277,14 @@ MimeType=x-scheme-handler/pivx;
 Categories=Office;Finance;
 EOF
 # change touch date when modifying desktop
-touch -a -m -t 201511100546 %{buildroot}%{_datadir}/applications/pivx-core.desktop
-%{_bindir}/desktop-file-validate %{buildroot}%{_datadir}/applications/pivx-core.desktop
+touch -a -m -t 201511100546 %{buildroot}%{_datadir}/applications/lats-core.desktop
+%{_bindir}/desktop-file-validate %{buildroot}%{_datadir}/applications/lats-core.desktop
 
 # KDE protocol - change the touch timestamp if modifying
 mkdir -p %{buildroot}%{_datadir}/kde4/services
-cat <<EOF > %{buildroot}%{_datadir}/kde4/services/pivx-core.protocol
+cat <<EOF > %{buildroot}%{_datadir}/kde4/services/lats-core.protocol
 [Protocol]
-exec=pivx-qt '%u'
+exec=lats-qt '%u'
 protocol=pivx
 input=none
 output=none
@@ -296,14 +296,14 @@ makedir=false
 deleting=false
 EOF
 # change touch date when modifying protocol
-touch -a -m -t 201511100546 %{buildroot}%{_datadir}/kde4/services/pivx-core.protocol
+touch -a -m -t 201511100546 %{buildroot}%{_datadir}/kde4/services/lats-core.protocol
 %endif
 
 # man pages
-install -D -p %{SOURCE20} %{buildroot}%{_mandir}/man1/pivxd.1
-install -p %{SOURCE21} %{buildroot}%{_mandir}/man1/pivx-cli.1
+install -D -p %{SOURCE20} %{buildroot}%{_mandir}/man1/latsd.1
+install -p %{SOURCE21} %{buildroot}%{_mandir}/man1/lats-cli.1
 %if %{_buildqt}
-install -p %{SOURCE22} %{buildroot}%{_mandir}/man1/pivx-qt.1
+install -p %{SOURCE22} %{buildroot}%{_mandir}/man1/lats-qt.1
 %endif
 
 # nuke these, we do extensive testing of binaries in %%check before packaging
@@ -311,7 +311,7 @@ rm -f %{buildroot}%{_bindir}/test_*
 
 %check
 make check
-srcdir=src test/pivx-util-test.py
+srcdir=src test/lats-util-test.py
 test/functional/test_runner.py --extended
 
 %post libs -p /sbin/ldconfig
@@ -338,7 +338,7 @@ done
 %{_sbindir}/semanage port -a -t pivx_port_t -p tcp 18333
 %{_sbindir}/semanage port -a -t pivx_port_t -p tcp 18443
 %{_sbindir}/semanage port -a -t pivx_port_t -p tcp 18444
-%{_sbindir}/fixfiles -R pivx-server restore &> /dev/null || :
+%{_sbindir}/fixfiles -R lats-server restore &> /dev/null || :
 %{_sbindir}/restorecon -R %{_localstatedir}/lib/pivx || :
 fi
 
@@ -362,7 +362,7 @@ if [ $1 -eq 0 ]; then
 	for selinuxvariant in %{selinux_variants}; do
 		%{_sbindir}/semodule -s ${selinuxvariant} -r pivx &> /dev/null || :
 	done
-	%{_sbindir}/fixfiles -R pivx-server restore &> /dev/null || :
+	%{_sbindir}/fixfiles -R lats-server restore &> /dev/null || :
 	[ -d %{_localstatedir}/lib/pivx ] && \
 		%{_sbindir}/restorecon -R %{_localstatedir}/lib/pivx &> /dev/null || :
 	fi
@@ -376,15 +376,15 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %license COPYING db-%{bdbv}.NC-LICENSE
 %doc COPYING pivx.conf.example doc/README.md doc/bips.md doc/files.md doc/multiwallet-qt.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md
-%attr(0755,root,root) %{_bindir}/pivx-qt
-%attr(0644,root,root) %{_datadir}/applications/pivx-core.desktop
-%attr(0644,root,root) %{_datadir}/kde4/services/pivx-core.protocol
+%attr(0755,root,root) %{_bindir}/lats-qt
+%attr(0644,root,root) %{_datadir}/applications/lats-core.desktop
+%attr(0644,root,root) %{_datadir}/kde4/services/lats-core.protocol
 %attr(0644,root,root) %{_datadir}/pixmaps/*.ico
 %attr(0644,root,root) %{_datadir}/pixmaps/*.bmp
 %attr(0644,root,root) %{_datadir}/pixmaps/*.svg
 %attr(0644,root,root) %{_datadir}/pixmaps/*.png
 %attr(0644,root,root) %{_datadir}/pixmaps/*.xpm
-%attr(0644,root,root) %{_mandir}/man1/pivx-qt.1*
+%attr(0644,root,root) %{_mandir}/man1/lats-qt.1*
 %endif
 
 %files libs
@@ -407,29 +407,29 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %license COPYING db-%{bdbv}.NC-LICENSE
 %doc COPYING pivx.conf.example doc/README.md doc/REST-interface.md doc/bips.md doc/dnsseed-policy.md doc/files.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md
-%attr(0755,root,root) %{_sbindir}/pivxd
+%attr(0755,root,root) %{_sbindir}/latsd
 %attr(0644,root,root) %{_tmpfilesdir}/pivx.conf
 %attr(0644,root,root) %{_unitdir}/pivx.service
 %dir %attr(0750,pivx,pivx) %{_sysconfdir}/pivx
 %dir %attr(0750,pivx,pivx) %{_localstatedir}/lib/pivx
 %config(noreplace) %attr(0600,root,root) %{_sysconfdir}/sysconfig/pivx
 %attr(0644,root,root) %{_datadir}/selinux/*/*.pp
-%attr(0644,root,root) %{_mandir}/man1/pivxd.1*
+%attr(0644,root,root) %{_mandir}/man1/latsd.1*
 
 %files utils
 %defattr(-,root,root,-)
 %license COPYING
 %doc COPYING pivx.conf.example doc/README.md
-%attr(0755,root,root) %{_bindir}/pivx-cli
-%attr(0755,root,root) %{_bindir}/pivx-tx
+%attr(0755,root,root) %{_bindir}/lats-cli
+%attr(0755,root,root) %{_bindir}/lats-tx
 %attr(0755,root,root) %{_bindir}/bench_pivx
-%attr(0644,root,root) %{_mandir}/man1/pivx-cli.1*
+%attr(0644,root,root) %{_mandir}/man1/lats-cli.1*
 
 
 
 %changelog
 * Fri Feb 26 2016 Alice Wonder <buildmaster@librelamp.com> - 0.12.0-2
-- Rename Qt package from pivx to pivx-core
+- Rename Qt package from pivx to lats-core
 - Make building of the Qt package optional
 - When building the Qt package, default to Qt5 but allow building
 -  against Qt4
