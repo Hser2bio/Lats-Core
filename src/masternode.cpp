@@ -365,27 +365,32 @@ CAmount CMasternode::GetMasternodeNodeCollateral(int nHeight)
 CAmount CMasternode::GetBlockValue(int nHeight)
 {
     CAmount maxMoneyOut= Params().GetConsensus().nMaxMoneyOut;
+    CAmount nBlockValue;
 
     if(nMoneySupply >= maxMoneyOut) {
         return 0;
     }
 
-    if(nMoneySupply + nSubsidy > maxMoneyOut) {
-        return nMoneySupply + nSubsidy - maxMoneyOut;
-    }
-
     // Fixed block value on regtest
     if (Params().IsRegTestNet()) {
-        return 250 * COIN;
+        nBlockValue = 250 * COIN;
+        return nBlockValue;
     }
+
     // Testnet high-inflation blocks [2, 200] with value 250k LATS
     const bool isTestnet = Params().IsTestnet();
     if (isTestnet && nHeight < 201 && nHeight > 1) {
-        return 250000 * COIN;
+        nBlockValue = 250000 * COIN;
+        return nBlockValue;
     }
-    if (nHeight >= 1 && nHeight <= 1000)       return 100  * COIN;
-    // Premine for 6 masternodes at block 1
-    return 9 * COIN;
+    nBlockValue = 100 * COIN;
+    if (nHeight >= 1 && nHeight <= 1000)       return nBlockValue;
+
+    if(nMoneySupply + nBlockValue > maxMoneyOut) {
+        return nMoneySupply + nBlockValue - maxMoneyOut;
+    }
+    nBlockValue = 9 * COIN;
+    return nBlockValue;
 }
 
 CAmount CMasternode::GetMasternodePayment()
