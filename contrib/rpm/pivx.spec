@@ -24,7 +24,7 @@ URL:		https://pivx.org/
 Source0:	https://pivx.org/bin/lats-core-%{version}/lats-%{version}.tar.gz
 Source1:	http://download.oracle.com/berkeley-db/db-%{bdbv}.NC.tar.gz
 
-Source10:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/debian/examples/pivx.conf
+Source10:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/debian/examples/lats.conf
 
 #man pages
 Source20:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/doc/man/latsd.1
@@ -151,7 +151,7 @@ This package contains utilities needed by the lats-server package.
 %prep
 %setup -q
 %patch0 -p1 -b .libressl
-cp -p %{SOURCE10} ./pivx.conf.example
+cp -p %{SOURCE10} ./lats.conf.example
 tar -zxf %{SOURCE1}
 cp -p db-%{bdbv}.NC/LICENSE ./db-%{bdbv}.NC-LICENSE
 mkdir db4 SELinux
@@ -186,10 +186,10 @@ mv %{buildroot}%{_bindir}/latsd %{buildroot}%{_sbindir}/latsd
 
 # systemd stuff
 mkdir -p %{buildroot}%{_tmpfilesdir}
-cat <<EOF > %{buildroot}%{_tmpfilesdir}/pivx.conf
+cat <<EOF > %{buildroot}%{_tmpfilesdir}/lats.conf
 d /run/latsd 0750 pivx pivx -
 EOF
-touch -a -m -t 201504280000 %{buildroot}%{_tmpfilesdir}/pivx.conf
+touch -a -m -t 201504280000 %{buildroot}%{_tmpfilesdir}/lats.conf
 
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 cat <<EOF > %{buildroot}%{_sysconfdir}/sysconfig/pivx
@@ -200,7 +200,7 @@ OPTIONS=""
 
 # System service defaults.
 # Don't change these unless you know what you're doing.
-CONFIG_FILE="%{_sysconfdir}/pivx/pivx.conf"
+CONFIG_FILE="%{_sysconfdir}/pivx/lats.conf"
 DATA_DIR="%{_localstatedir}/lib/pivx"
 PID_FILE="/run/latsd/latsd.pid"
 EOF
@@ -375,7 +375,7 @@ rm -rf %{buildroot}
 %files core
 %defattr(-,root,root,-)
 %license COPYING db-%{bdbv}.NC-LICENSE
-%doc COPYING pivx.conf.example doc/README.md doc/bips.md doc/files.md doc/multiwallet-qt.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md
+%doc COPYING lats.conf.example doc/README.md doc/bips.md doc/files.md doc/multiwallet-qt.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md
 %attr(0755,root,root) %{_bindir}/lats-qt
 %attr(0644,root,root) %{_datadir}/applications/lats-core.desktop
 %attr(0644,root,root) %{_datadir}/kde4/services/lats-core.protocol
@@ -406,9 +406,9 @@ rm -rf %{buildroot}
 %files server
 %defattr(-,root,root,-)
 %license COPYING db-%{bdbv}.NC-LICENSE
-%doc COPYING pivx.conf.example doc/README.md doc/REST-interface.md doc/bips.md doc/dnsseed-policy.md doc/files.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md
+%doc COPYING lats.conf.example doc/README.md doc/REST-interface.md doc/bips.md doc/dnsseed-policy.md doc/files.md doc/reduce-traffic.md doc/release-notes.md doc/tor.md
 %attr(0755,root,root) %{_sbindir}/latsd
-%attr(0644,root,root) %{_tmpfilesdir}/pivx.conf
+%attr(0644,root,root) %{_tmpfilesdir}/lats.conf
 %attr(0644,root,root) %{_unitdir}/pivx.service
 %dir %attr(0750,pivx,pivx) %{_sysconfdir}/pivx
 %dir %attr(0750,pivx,pivx) %{_localstatedir}/lib/pivx
@@ -419,7 +419,7 @@ rm -rf %{buildroot}
 %files utils
 %defattr(-,root,root,-)
 %license COPYING
-%doc COPYING pivx.conf.example doc/README.md
+%doc COPYING lats.conf.example doc/README.md
 %attr(0755,root,root) %{_bindir}/lats-cli
 %attr(0755,root,root) %{_bindir}/lats-tx
 %attr(0755,root,root) %{_bindir}/bench_lats
