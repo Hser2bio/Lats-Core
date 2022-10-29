@@ -220,9 +220,9 @@ public:
         pchMessageStart[3] = 0xd9;
         nDefaultPort = __PORT_MAINNET__;
 
-        vSeeds.emplace_back("188.40.233.39", true);     // Primary DNS Seeder from Fuzzbawls
-        vSeeds.emplace_back("188.40.233.40", true);    // Secondary DNS Seeder from Fuzzbawls
-        vSeeds.emplace_back("188.40.233.41", true);     // Primary DNS Seeder from furszy
+        vSeeds.emplace_back("seeder1", "188.40.233.39", true);     // Primary DNS Seeder from Fuzzbawls
+        vSeeds.emplace_back("seeder2", "188.40.233.40", true);    // Secondary DNS Seeder from Fuzzbawls
+        vSeeds.emplace_back("seeder3", "188.40.233.41", true);     // Primary DNS Seeder from furszy
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 48); // L
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 13); // 6
