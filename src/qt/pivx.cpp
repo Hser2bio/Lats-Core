@@ -541,8 +541,8 @@ int main(int argc, char* argv[])
 // Do not refer to data directory yet, this can be overridden by Intro::pickDataDirectory
 
 /// 2. Basic Qt initialization (not dependent on parameters or configuration)
-    Q_INIT_RESOURCE(pivx_locale);
-    Q_INIT_RESOURCE(pivx);
+    Q_INIT_RESOURCE(lats_locale);
+    Q_INIT_RESOURCE(lats);
 
     //TODO to set this up we need to review all the UI measurements to be relative to the screen DPI
     // Generate high-dpi pixmaps

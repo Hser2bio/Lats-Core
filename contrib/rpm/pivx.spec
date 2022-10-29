@@ -33,7 +33,7 @@ Source22:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/doc/ma
 
 #selinux
 Source30:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/rpm/pivx.te
-# Source31 - what about lats-tx and bench_pivx ???
+# Source31 - what about lats-tx and bench_lats ???
 Source31:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/rpm/pivx.fc
 Source32:	https://raw.githubusercontent.com/lats-project/pivx/v%{version}/contrib/rpm/pivx.if
 
@@ -143,7 +143,7 @@ lats-core daemon.
 
 The lats-cli utility allows you to communicate and control a pivx daemon
 over RPC, the lats-tx utility allows you to create a custom transaction, and
-the bench_pivx utility can be used to perform some benchmarks.
+the bench_lats utility can be used to perform some benchmarks.
 
 This package contains utilities needed by the lats-server package.
 
@@ -332,12 +332,12 @@ if [ `%{_sbindir}/sestatus |grep -c "disabled"` -eq 0 ]; then
 for selinuxvariant in %{selinux_variants}; do
 	%{_sbindir}/semodule -s ${selinuxvariant} -i %{_datadir}/selinux/${selinuxvariant}/pivx.pp &> /dev/null || :
 done
-%{_sbindir}/semanage port -a -t pivx_port_t -p tcp 8332
-%{_sbindir}/semanage port -a -t pivx_port_t -p tcp 8333
-%{_sbindir}/semanage port -a -t pivx_port_t -p tcp 18332
-%{_sbindir}/semanage port -a -t pivx_port_t -p tcp 18333
-%{_sbindir}/semanage port -a -t pivx_port_t -p tcp 18443
-%{_sbindir}/semanage port -a -t pivx_port_t -p tcp 18444
+%{_sbindir}/semanage port -a -t lats_port_t -p tcp 8332
+%{_sbindir}/semanage port -a -t lats_port_t -p tcp 8333
+%{_sbindir}/semanage port -a -t lats_port_t -p tcp 18332
+%{_sbindir}/semanage port -a -t lats_port_t -p tcp 18333
+%{_sbindir}/semanage port -a -t lats_port_t -p tcp 18443
+%{_sbindir}/semanage port -a -t lats_port_t -p tcp 18444
 %{_sbindir}/fixfiles -R lats-server restore &> /dev/null || :
 %{_sbindir}/restorecon -R %{_localstatedir}/lib/pivx || :
 fi
@@ -422,7 +422,7 @@ rm -rf %{buildroot}
 %doc COPYING pivx.conf.example doc/README.md
 %attr(0755,root,root) %{_bindir}/lats-cli
 %attr(0755,root,root) %{_bindir}/lats-tx
-%attr(0755,root,root) %{_bindir}/bench_pivx
+%attr(0755,root,root) %{_bindir}/bench_lats
 %attr(0644,root,root) %{_mandir}/man1/lats-cli.1*
 
 

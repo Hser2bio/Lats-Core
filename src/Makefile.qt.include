@@ -71,7 +71,7 @@ QT_MOC_CPP = \
   qt/moc_askpassphrasedialog.cpp \
   qt/moc_bantablemodel.cpp \
   qt/moc_bitcoinaddressvalidator.cpp \
-  qt/pivx/moc_pivxgui.cpp \
+  qt/pivx/moc_latsgui.cpp \
   qt/moc_bitcoinunits.cpp \
   qt/moc_clientmodel.cpp \
   qt/moc_coincontroldialog.cpp \
@@ -160,10 +160,10 @@ QT_MOC = \
   qt/rpcconsole.moc \
   qt/pivx/settings/moc_settingsconsolewidget.cpp
 
-QT_QRC_CPP = qt/qrc_pivx.cpp
+QT_QRC_CPP = qt/qrc_lats.cpp
 QT_QRC = qt/pivx.qrc
-QT_QRC_LOCALE_CPP = qt/qrc_pivx_locale.cpp
-QT_QRC_LOCALE = qt/pivx_locale.qrc
+QT_QRC_LOCALE_CPP = qt/qrc_lats_locale.cpp
+QT_QRC_LOCALE = qt/lats_locale.qrc
 
 PROTOBUF_CC = qt/paymentrequest.pb.cc
 PROTOBUF_H = qt/paymentrequest.pb.h
@@ -685,12 +685,12 @@ $(srcdir)/qt/pivxstrings.cpp: $(libbitcoin_server_a_SOURCES) $(libbitcoin_wallet
 
 translate: $(srcdir)/qt/pivxstrings.cpp $(QT_FORMS_UI) $(QT_FORMS_UI) $(BITCOIN_QT_BASE_CPP) qt/pivx.cpp $(BITCOIN_QT_WINDOWS_CPP) $(BITCOIN_QT_WALLET_CPP) $(BITCOIN_QT_H) $(BITCOIN_MM)
 	@test -n $(LUPDATE) || echo "lupdate is required for updating translations"
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -locations relative -no-obsolete -ts $(srcdir)/qt/locale/pivx_en.ts
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(LUPDATE) $^ -locations relative -no-obsolete -ts $(srcdir)/qt/locale/lats_en.ts
 
 $(QT_QRC_LOCALE_CPP): $(QT_QRC_LOCALE) $(QT_QM)
 	@test -f $(RCC)
 	@cp -f $< $(@D)/temp_$(<F)
-	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) --verbose -name pivx_locale $(@D)/temp_$(<F) | \
+	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) --verbose -name lats_locale $(@D)/temp_$(<F) | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 	@rm $(@D)/temp_$(<F)
 
@@ -699,14 +699,14 @@ $(QT_QRC_CPP): $(QT_QRC) $(QT_FORMS_H) $(RES_ICONS) $(RES_FONTS) $(RES_IMAGES) $
 	$(AM_V_GEN) QT_SELECT=$(QT_SELECT) $(RCC) --verbose -name pivx $< | \
 	  $(SED) -e '/^\*\*.*Created:/d' -e '/^\*\*.*by:/d' > $@
 
-CLEAN_QT = $(nodist_qt_libbitcoinqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno qt/temp_pivx_locale.qrc
+CLEAN_QT = $(nodist_qt_libbitcoinqt_a_SOURCES) $(QT_QM) $(QT_FORMS_H) qt/*.gcda qt/*.gcno qt/temp_lats_locale.qrc
 
 CLEANFILES += $(CLEAN_QT)
 
-pivx_qt_clean: FORCE
+lats_qt_clean: FORCE
 	rm -f $(CLEAN_QT) $(qt_libbitcoinqt_a_OBJECTS) $(qt_lats_qt_OBJECTS) qt/lats-qt$(EXEEXT) $(LIBBITCOINQT)
 
-pivx_qt : qt/lats-qt$(EXEEXT)
+lats_qt : qt/lats-qt$(EXEEXT)
 
 ui_%.h: %.ui
 	@test -f $(UIC)

@@ -10,7 +10,7 @@
 #include "uint256.h"
 #include "undo.h"
 #include "utilstrencodings.h"
-#include "test/test_pivx.h"
+#include "test/test_lats.h"
 
 #include <vector>
 #include <map>
