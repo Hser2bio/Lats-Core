@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>org.pivx.latsd</string>
+	<string>org.lats.latsd</string>
 	<key>ProgramArguments</key>
 	<array>
 		<string>/usr/local/bin/latsd</string>

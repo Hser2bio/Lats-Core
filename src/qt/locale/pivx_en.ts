@@ -2186,7 +2186,7 @@ NODES</source>
 <context>
     <name>PIVXGUI</name>
     <message>
-        <location filename="../pivx/pivxgui.cpp" line="+69"/>
+        <location filename="../pivx/latsgui.cpp" line="+69"/>
         <location line="+298"/>
         <location line="+69"/>
         <source>LATS</source>
@@ -2485,7 +2485,7 @@ Address: %4
         <translation>%1 ms</translation>
     </message>
     <message>
-        <location filename="../pivx.cpp" line="+518"/>
+        <location filename="../lats.cpp" line="+518"/>
         <source>A fatal error occurred. LATS can no longer continue safely and will quit.</source>
         <translation type="unfinished"></translation>
     </message>
