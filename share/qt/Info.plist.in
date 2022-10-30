@@ -46,7 +46,7 @@
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLName</key>
-      <string>io.lats.PivxPayment</string>
+      <string>io.lats.LatsPayment</string>
       <key>CFBundleURLSchemes</key>
       <array>
         <string>pivx</string>
@@ -60,7 +60,7 @@
       <key>UTTypeIdentifier</key>
       <string>io.lats.paymentrequest</string>
       <key>UTTypeDescription</key>
-      <string>Pivx payment request</string>
+      <string>Lats payment request</string>
       <key>UTTypeConformsTo</key>
       <array>
         <string>public.data</string>
