@@ -110,7 +110,7 @@ public:
         // // This is used inorder to mine the genesis block. Once found, we can use the nonce and block hash found to create a valid genesis block
         // /////////////////////////////////////////////////////////////////
 
-        uint32_t nGenesisTime = 1612360301; // 2021-02-03T13:51:41+00:00
+        uint32_t nGenesisTime = 1667140000; // 2021-02-03T13:51:41+00:00
 
         arith_uint256 test;
         bool fNegative;
