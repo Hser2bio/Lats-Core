@@ -1,2 +1,2 @@
 contrib/latsd.bash-completion	latsd
-contrib/pivx-cli.bash-completion pivx-cli
+contrib/lats-cli.bash-completion lats-cli

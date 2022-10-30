@@ -8,16 +8,16 @@
 # /etc/pivx/lats.conf
 
 [Unit]
-Description=PIVX daemon
+Description=Lats daemon
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/pivxd -daemon -conf=/etc/pivx/lats.conf -pid=/run/pivxd/pivxd.pid
-# Creates /run/pivxd owned by pivx
-RuntimeDirectory=pivxd
+ExecStart=/usr/bin/latsd -daemon -conf=/etc/pivx/lats.conf -pid=/run/latsd/latsd.pid
+# Creates /run/latsd owned by pivx
+RuntimeDirectory=latsd
 User=pivx
 Type=forking
-PIDFile=/run/pivxd/pivxd.pid
+PIDFile=/run/latsd/latsd.pid
 Restart=on-failure
 
 # Hardening measures

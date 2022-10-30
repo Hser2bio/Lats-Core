@@ -112,7 +112,7 @@ that wants to link against that library, then you need this package installed.
 Most people do not need this package installed.
 
 %package server
-Summary:	The pivx daemon
+Summary:	The lats daemon
 Group:		System Environment/Daemons
 Requires:	lats-utils = %{version}-%{release}
 Requires:	selinux-policy policycoreutils-python
@@ -141,7 +141,7 @@ Group:		Applications/System
 This package provides several command line utilities for interacting with a
 lats-core daemon.
 
-The lats-cli utility allows you to communicate and control a pivx daemon
+The lats-cli utility allows you to communicate and control a lats daemon
 over RPC, the lats-tx utility allows you to create a custom transaction, and
 the bench_lats utility can be used to perform some benchmarks.
 
@@ -193,18 +193,18 @@ touch -a -m -t 201504280000 %{buildroot}%{_tmpfilesdir}/lats.conf
 
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
 cat <<EOF > %{buildroot}%{_sysconfdir}/sysconfig/pivx
-# Provide options to the pivx daemon here, for example
+# Provide options to the lats daemon here, for example
 # OPTIONS="-testnet -disable-wallet"
 
 OPTIONS=""
 
 # System service defaults.
 # Don't change these unless you know what you're doing.
-CONFIG_FILE="%{_sysconfdir}/pivx/lats.conf"
-DATA_DIR="%{_localstatedir}/lib/pivx"
+CONFIG_FILE="%{_sysconfdir}/lats/lats.conf"
+DATA_DIR="%{_localstatedir}/lib/lats"
 PID_FILE="/run/latsd/latsd.pid"
 EOF
-touch -a -m -t 201504280000 %{buildroot}%{_sysconfdir}/sysconfig/pivx
+touch -a -m -t 201504280000 %{buildroot}%{_sysconfdir}/sysconfig/lats
 
 mkdir -p %{buildroot}%{_unitdir}
 cat <<EOF > %{buildroot}%{_unitdir}/pivx.service

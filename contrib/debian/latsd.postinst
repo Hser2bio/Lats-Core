@@ -5,7 +5,7 @@
 
 set -e
 
-BCUSER="pivx"
+BCUSER="lats"
 BCHOME="/var/lib/pivx"
 
 if [ "$1" = "configure" ]; then

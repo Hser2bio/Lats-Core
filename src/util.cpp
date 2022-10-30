@@ -84,8 +84,8 @@
 #include <openssl/crypto.h>
 #include <openssl/rand.h>
 
-const char * const PIVX_CONF_FILENAME = "LATS.conf";
-const char * const PIVX_PID_FILENAME = "LATS.pid";
+const char * const PIVX_CONF_FILENAME = "lats.conf";
+const char * const PIVX_PID_FILENAME = "lats.pid";
 const char * const PIVX_MASTERNODE_CONF_FILENAME = "masternode.conf";
 const char * const PIVX_ACTIVE_MASTERNODE_CONF_FILENAME = "activemasternode.conf";
 
@@ -264,7 +264,7 @@ static std::string FormatException(const std::exception* pex, const char* pszThr
     char pszModule[MAX_PATH] = "";
     GetModuleFileNameA(NULL, pszModule, sizeof(pszModule));
 #else
-    const char* pszModule = "LATS";
+    const char* pszModule = "lats";
 #endif
     if (pex)
         return strprintf(
@@ -290,7 +290,7 @@ fs::path GetDefaultDataDir()
 // Unix: ~/.LATS
 #ifdef WIN32
     // Windows
-    return GetSpecialFolderPath(CSIDL_APPDATA) / "LATS";
+    return GetSpecialFolderPath(CSIDL_APPDATA) / "lats";
 #else
     fs::path pathRet;
     char* pszHome = getenv("HOME");
@@ -302,10 +302,10 @@ fs::path GetDefaultDataDir()
     // Mac
     pathRet /= "Library/Application Support";
     TryCreateDirectory(pathRet);
-    return pathRet / "LATS";
+    return pathRet / "lats";
 #else
     // Unix
-    return pathRet / ".LATS";
+    return pathRet / ".lats";
 #endif
 #endif
 }
