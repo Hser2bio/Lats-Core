@@ -51,9 +51,10 @@ TopBar::TopBar(PIVXGUI* _mainWindow, QWidget* parent) : PWidget(_mainWindow, par
     setCssProperty({ui->labelAmountTopPiv}, "amount-small-topbar");
     setCssProperty({ui->labelAmountPiv}, "amount-topbar");
     setCssProperty({ui->labelPendingPiv, ui->labelImmaturePiv, ui->labelAvailablePiv,
-                       ui->labelLockedPiv, ui->labelMasternodeCount, ui->labelCollateralPiv,
-                       ui->labelNextCollateralBlocks, ui->labelNextCollateralValue},
+                       ui->labelLockedPiv},
         "amount-small-topbar");
+    setCssProperty({ui->labelMasternodeCount, ui->labelCollateralPiv,
+                       ui->labelNextCollateralBlocks, ui->labelNextCollateralValue}, "amount-small-topbar-mn");
 
     // Next masternode collateral
     ui->widgetNextCollateral->setVisible(false);

@@ -98,6 +98,34 @@ QPushButton[cssClass="img-nav-logo"] {
     color: #55c6ff;
 }
 
+/*****
+*masternode conf & coin conf file edit topbar buttons.
+*****/
+
+QPushButton[cssClass="btn-check-conf"] {
+    qproperty-icon: url("://ic-check-coin-conf");
+    qproperty-iconSize: 24px 24px;
+    color: #262626;
+    background-color: #d1d3d4;
+    border-radius: 2px;
+}
+  
+QPushButton[cssClass="btn-check-masternodes"] {
+    qproperty-icon: url("://ic-check-mn-conf");
+    qproperty-iconSize: 24px 24px;
+    color: #262626;
+    background-color: #d1d3d4;
+    border-radius: 2px;
+}
+  
+QPushButton[cssClass="btn-check-console"] {
+    qproperty-icon: url("://ic-check-console");
+    qproperty-iconSize: 24px 24px;
+    color: #262626;
+    background-color: #d1d3d4;
+    border-radius: 2px;
+}
+
 /*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 !############# Cold staking
  ################################*/
@@ -415,6 +443,11 @@ HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH*/
 
 *[cssClass="amount-small-topbar"] {
     color:#fdfdfd;
+    font-size:21px;
+}
+
+*[cssClass="amount-small-topbar-mn"] {
+    color:#000000;
     font-size:21px;
 }
 
