@@ -1,7 +1,7 @@
 <!--- Remove this description and sections that do not apply -->
 
 This issue tracker is only for technical issues related to Lats Core.
-General LATS questions and/or support requests and are best directed to the [LATS Discord](__decenomy_discord_link__).
+General LATS questions and/or support requests and are best directed to the [LATS Discord](https://discord.gg/Yqzpyuk5PJ).
 
 ### Describe the issue
 

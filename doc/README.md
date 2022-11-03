@@ -28,7 +28,7 @@ Drag Lats-Qt to your applications folder, and then run Lats-Qt.
 
 * See the documentation at the [LATS Wiki](https://https://github.com/LATS-DAO/Lats-Core/)
 for help and more information.
-* Join our Discord server [Discord Server](__decenomy_discord_link__)
+* Join our Discord server [Discord Server](https://discord.gg/Yqzpyuk5PJ)
 
 Building
 ---------------------
@@ -56,7 +56,7 @@ The LATS repo's [root README](/README.md) contains relevant information on the d
 
 ### Resources
 * Discuss on the [LATS Homepage](__decenomy_website_link__/).
-* Join the [LATS Discord](__decenomy_discord_link__).
+* Join the [LATS Discord](https://discord.gg/Yqzpyuk5PJ).
 
 ### Miscellaneous
 - [Assets Attribution](assets-attribution.md)
