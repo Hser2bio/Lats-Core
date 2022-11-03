@@ -412,7 +412,7 @@ RES_ICONS = \
   qt/pivx/res/img/ic-arrow-white-left.svg \
   qt/pivx/res/img/ic-exit.svg \
   qt/pivx/res/img/ic-switch-liliac-on.svg \
-  qt/pivx/res/img/img-nav-logo.svg \
+  qt/pivx/res/img/img-nav-logo.png \
   qt/pivx/res/img/ic-arrow-white-right.svg \
   qt/pivx/res/img/ic-expand.svg \
   qt/pivx/res/img/ic-switch-off.svg \
