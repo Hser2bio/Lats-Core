@@ -1,7 +1,7 @@
 **ALERT: This document should be updated for EACH coin individually**
 **The dummy values below belongs to Sapphire Coin**
 
-DECENOMY Standard wallet repository
+Lats Core repository
 =====================================
 
 ### Coin Specs
