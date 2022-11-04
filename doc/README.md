@@ -3,7 +3,7 @@ Lats Core
 
 Setup
 ---------------------
-[Lats Core](__decenomy_website_link__/) is the original LATS client and it builds the backbone of the network. However, it downloads and stores the entire history of LATS transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more. Thankfully you only have to do this once.
+[Lats Core](https://lats.cc//) is the original LATS client and it builds the backbone of the network. However, it downloads and stores the entire history of LATS transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more. Thankfully you only have to do this once.
 
 Running
 ---------------------
@@ -55,7 +55,7 @@ The LATS repo's [root README](/README.md) contains relevant information on the d
 - [Dnsseed Policy](dnsseed-policy.md)
 
 ### Resources
-* Discuss on the [LATS Homepage](__decenomy_website_link__/).
+* Discuss on the [LATS Homepage](https://lats.cc//).
 * Join the [LATS Discord](https://discord.gg/Yqzpyuk5PJ).
 
 ### Miscellaneous
