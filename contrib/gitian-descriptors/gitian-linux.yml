@@ -1,5 +1,5 @@
 ---
-name: "lats-linux-4.3"
+name: "lats-linux-1.0"
 enable_cache: true
 distro: "ubuntu"
 suites:
