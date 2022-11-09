@@ -105,25 +105,34 @@ QPushButton[cssClass="img-nav-logo"] {
 QPushButton[cssClass="btn-check-conf"] {
     qproperty-icon: url("://ic-check-coin-conf");
     qproperty-iconSize: 24px 24px;
-    color: #262626;
-    background-color: #d1d3d4;
-    border-radius: 2px;
+    background-color:#505c4b7d;
+    color:#fdfdfd;
+    padding-right:6px;
+    padding-left:6px;
+    border-bottom:2px solid #505c4b7d;
+    border-radius:2px;
 }
   
 QPushButton[cssClass="btn-check-masternodes"] {
     qproperty-icon: url("://ic-check-mn-conf");
     qproperty-iconSize: 24px 24px;
-    color: #262626;
-    background-color: #d1d3d4;
-    border-radius: 2px;
+    background-color:#505c4b7d;
+    color:#fdfdfd;
+    padding-right:6px;
+    padding-left:6px;
+    border-bottom:2px solid #505c4b7d;
+    border-radius:2px;
 }
   
 QPushButton[cssClass="btn-check-console"] {
     qproperty-icon: url("://ic-check-console");
     qproperty-iconSize: 24px 24px;
-    color: #262626;
-    background-color: #d1d3d4;
-    border-radius: 2px;
+    background-color:#505c4b7d;
+    color:#fdfdfd;
+    padding-right:6px;
+    padding-left:6px;
+    border-bottom:2px solid #505c4b7d;
+    border-radius:2px;
 }
 
 /*HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH

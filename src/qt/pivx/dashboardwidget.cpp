@@ -467,9 +467,9 @@ void DashboardWidget::changeChartColors()
         labelsColor = QColor("#77000000");
         backgroundColor = QColor(255,255,255);
     } else {
-        gridLineColor = QColor("#40ffffff");
-        labelsColor = QColor("#a0ffffff");
-        backgroundColor = QColor(15,11,22);
+        gridLineColor = QColor("#1a000000");
+        labelsColor = QColor("#77000000");
+        backgroundColor = QColor(255,255,255);
     }
 
     axisX->setGridLineColor(backgroundColor);
