@@ -223,6 +223,9 @@ public:
         vSeeds.emplace_back("seeder1", "188.40.233.39", true);     // Primary DNS Seeder from Fuzzbawls
         vSeeds.emplace_back("seeder2", "188.40.233.40", true);    // Secondary DNS Seeder from Fuzzbawls
         vSeeds.emplace_back("seeder3", "188.40.233.41", true);     // Primary DNS Seeder from furszy
+        vSeeds.emplace_back("seeder1", "seed1.lats-seed.com", true);
+        vSeeds.emplace_back("seeder1", "seed2.lats-seed.com", true);
+        vSeeds.emplace_back("seeder1", "seed3.lats-seed.com", true);
 
         base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1, 48); // L
         base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1, 13); // 6
