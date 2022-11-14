@@ -20,30 +20,36 @@ Lats Core repository
 =====================================
 
 ### Coin Specs
+<ul>
+  <li>PoW Algorithm: X11KVS</li>
+  <li>Premine: 0 LATS</li>
+  <li>PoW Blocks: 1 - 1000</li>
+  <li>PoS Blocks: Starting from 1001</li>
+  <li>Block Time: 60 Seconds</li>
+  <li>Maturity: 100 Confirmations</li>
+  <li>Prefix: LATS adresses start with the capital letter "D"</li>
+  <li>Ports: 45459</li>
+</ul>
 
-• PoW Algorithm: X11KVS
-• Premine: 0 LATS
-• PoW Blocks: 1 - 1000
-• PoS Blocks: Starting from 1001
-• Block Time: 60 Seconds
-• Maturity: 100 Confirmations
-• Prefix: LATS adresses start with the capital letter "D"
-• Ports: __PORT_MAINNET__ (p2p) / __RPCPORT_MAINNET__ (rpc)
-
-• Explorer https://explorer.lats.cc/
-
-• Website: https://lats.cc
+### Links
+<ul>
+  <li>Explorer https://explorer.lats.cc</li>
+  <li>Website: https://lats.cc</li>
+  <li>Wallets: https://github.com/LATS-DAO/Lats-Core/releases</li>
+</ul>
 
 =====================================
 
 ### Rewards Specs
 Note: Proof of Work after the block 1001
 
-• Block: 1001 - 501 000
-• Reward in a Single Block: 10
-• Masternode: 6.00 (60%)
-• Staker: 3.00 (30%)
-• Treasury: 1.00 (10%)
+<ul>
+  <li>Block: 1001 - 501 000</li>
+  <li>Reward in a Single Block: 10</li>
+  <li>Masternode: 6.00 (60%)</li>
+  <li>Staker: 3.00 (30%)</li>
+  <li>Treasury: 1.00 (10%)</li>
+</ul>
 
 • Halving: 5x halvings every 500'000 blocks (table to be added)
 
