@@ -38,6 +38,13 @@ Lats Core repository
   <li>Wallets: https://github.com/LATS-DAO/Lats-Core/releases</li>
 </ul>
 
+### Social
+<ul>
+  <li>Bitcointalk announcement: https://bitcointalk.org/index.php?topic=5420885.msg61287893</li>
+  <li>Discord: https://discord.gg/xVvajam5u2</li>
+  <li>TeleGram group: https://t.me/+U9bPVIPVEGs4MmY0</li>
+</ul>
+
 =====================================
 
 ### Rewards Specs
