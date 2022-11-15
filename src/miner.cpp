@@ -109,7 +109,10 @@ bool CreateCoinbaseTx(CBlock* pblock, const CScript& scriptPubKeyIn, CBlockIndex
     txNew.vout[0].scriptPubKey = scriptPubKeyIn;
 
     //Masternode and general budget payments
-    FillBlockPayee(txNew, pindexPrev, false);
+    //Allows for mining to ignore MN network
+    if (sporkManager.IsSporkActive(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)) {
+        FillBlockPayee(txNew, pindexPrev, false);
+    }
 
     txNew.vin[0].scriptSig = CScript() << pindexPrev->nHeight + 1 << OP_0;
     // If no payee was detected, then the whole block value goes to the first output.
