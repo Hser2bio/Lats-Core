@@ -378,7 +378,7 @@ CAmount CMasternode::GetBlockValue(int nHeight)
     }
 
     nBlockValue = 100 * COIN;
-    if (nHeight >= 1 && nHeight <= 1000)       return nBlockValue;
+    if (nHeight >= 1 && nHeight <= 2000)       return nBlockValue;
 
     if(nMoneySupply + nBlockValue > maxMoneyOut) {
         return nMoneySupply + nBlockValue - maxMoneyOut;
