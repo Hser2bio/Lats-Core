@@ -56,12 +56,6 @@ void CActiveMasternode::ManageStatus()
             return;
         }
 
-        if (pwalletMain->GetAvailableBalance() == 0) {
-            notCapableReason = "Hot node, waiting for remote activation.";
-            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
-            return;
-        }
-
         if (!GetLocal(service)) {
             notCapableReason = "Can't detect external address.";
             LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
@@ -80,6 +74,9 @@ void CActiveMasternode::ManageStatus()
             LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
             return;
         }
+
+        notCapableReason = "Waiting for start message from controller.";
+        return;
     }
 
     //send to all peers
