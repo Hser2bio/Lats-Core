@@ -887,3 +887,15 @@ bool WalletModel::isUsed(CTxDestination address)
 {
     return wallet->IsUsed(address);
 }
+
+// Depth of a wallet transaction or -1 if not found
+int WalletModel::getWalletTxDepth(const uint256& txHash) const
+{
+    const CWalletTx *walletTx = wallet->GetWalletTx(txHash);
+    if (!walletTx) {
+        return -1;
+    }
+    LOCK(wallet->cs_wallet);
+    return walletTx->GetDepthInMainChain();
+ }
+

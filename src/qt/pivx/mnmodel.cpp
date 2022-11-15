@@ -39,16 +39,8 @@ void MNModel::updateMNList()
             pmn->activeState = CMasternode::MASTERNODE_MISSING;
         }
         nodes.insert(QString::fromStdString(mne.getAlias()), std::make_pair(QString::fromStdString(mne.getIp()), pmn));
-        if (pwalletMain) {
-            bool txAccepted = false;
-            {
-                LOCK2(cs_main, pwalletMain->cs_wallet);
-                const CWalletTx *walletTx = pwalletMain->GetWalletTx(txHash);
-                if (walletTx && walletTx->GetDepthInMainChain() >= MASTERNODE_MIN_CONFIRMATIONS) {
-                    txAccepted = true;
-                }
-            }
-            collateralTxAccepted.insert(mne.getTxHash(), txAccepted);
+        if (walletModel) {
+            collateralTxAccepted.insert(mne.getTxHash(), walletModel->getWalletTxDepth(txHash) >= MASTERNODE_MIN_CONFIRMATIONS);
         }
     }
     Q_EMIT dataChanged(index(0, 0, QModelIndex()), index(end, 5, QModelIndex()) );
@@ -105,14 +97,8 @@ QVariant MNModel::data(const QModelIndex &index, int role) const
             case WAS_COLLATERAL_ACCEPTED:{
                 if (!isAvailable) return false;
                 std::string txHash = rec->vin.prevout.hash.GetHex();
-                if (!collateralTxAccepted.value(txHash)) {
-                    bool txAccepted = false;
-                    {
-                        LOCK2(cs_main, pwalletMain->cs_wallet);
-                        const CWalletTx *walletTx = pwalletMain->GetWalletTx(rec->vin.prevout.hash);
-                        txAccepted = walletTx && walletTx->GetDepthInMainChain() > 0;
-                    }
-                    return txAccepted;
+                if (!collateralTxAccepted.value(txHash) && walletModel) {
+                    return walletModel->getWalletTxDepth(rec->vin.prevout.hash) > 0;
                 }
                 return true;
             }
