@@ -13,7 +13,9 @@
 #include "uint256.h"
 #include "wallet/wallet.h"
 
-MNModel::MNModel(QObject *parent) : QAbstractTableModel(parent)
+MNModel::MNModel(QObject *parent, WalletModel* _model) :
+    QAbstractTableModel(parent),
+    walletModel(_model)
 {
     updateMNList();
 }

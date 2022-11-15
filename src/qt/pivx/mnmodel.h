@@ -15,7 +15,7 @@ class MNModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit MNModel(QObject *parent = nullptr);
+    explicit MNModel(QObject *parent, WalletModel* _model);
     ~MNModel() override {
         nodes.clear();
         collateralTxAccepted.clear();
