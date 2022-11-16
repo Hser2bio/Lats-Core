@@ -40,8 +40,12 @@ void CActiveMasternode::ManageStatus()
         pmn = mnodeman.Find(pubKeyMasternode);
         if (pmn != nullptr) {
             pmn->Check();
-            if (pmn->IsEnabled() && pmn->protocolVersion == PROTOCOL_VERSION)
-                EnableHotColdMasterNode(pmn->vin, pmn->addr);
+            if (pmn->protocolVersion != PROTOCOL_VERSION){
+                LogPrintf("%s: ERROR Trying to start a masternode running an old protocol version, "
+                          "the controller and masternode wallets need to be running the latest release version.\n", __func__);
+                return;
+            }
+            EnableHotColdMasterNode(pmn->vin, pmn->addr);    
         }
     }
 
