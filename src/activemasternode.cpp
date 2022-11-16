@@ -26,6 +26,7 @@ void CActiveMasternode::ManageStatus()
 
     LogPrint(BCLog::MASTERNODE, "CActiveMasternode::ManageStatus() - Begin\n");
 
+    CMasternode* pmn = mnodeman.Find(pubKeyMasternode);
     //need correct blocks to send ping
     if (!Params().IsRegTestNet() && !masternodeSync.IsBlockchainSynced()) {
         status = ACTIVE_MASTERNODE_SYNC_IN_PROCESS;
@@ -35,9 +36,7 @@ void CActiveMasternode::ManageStatus()
 
     if (status == ACTIVE_MASTERNODE_SYNC_IN_PROCESS) status = ACTIVE_MASTERNODE_INITIAL;
 
-    if (status == ACTIVE_MASTERNODE_INITIAL) {
-        CMasternode* pmn;
-        pmn = mnodeman.Find(pubKeyMasternode);
+    if (status == ACTIVE_MASTERNODE_INITIAL || (pmn && status == ACTIVE_MASTERNODE_NOT_CAPABLE)) {
         if (pmn != nullptr) {
             pmn->Check();
             if (pmn->protocolVersion != PROTOCOL_VERSION){
@@ -47,6 +46,12 @@ void CActiveMasternode::ManageStatus()
             }
             EnableHotColdMasterNode(pmn->vin, pmn->addr);    
         }
+    }
+    if(!GetLocal(service)) {
+        int nPort = 0;
+        std::string strHost;
+        SplitHostPort(pmn->addr.ToString(), nPort, strHost);
+        service = LookupNumeric(strHost.c_str(), nPort);
     }
 
     if (status != ACTIVE_MASTERNODE_STARTED) {
@@ -64,8 +69,11 @@ void CActiveMasternode::ManageStatus()
                         "Masternode address:port connection availability test failed, could not open a connection to the public masternode address (" +
                         service.ToString() + ")";
                 LogPrintf("%s - not capable: %s\n", __func__, notCapableReason);
+            } else {
+                // don't leak allocated object in memory
+                delete node;
             }
-
+            return;
         }
 
         notCapableReason = "Waiting for start message from controller.";
