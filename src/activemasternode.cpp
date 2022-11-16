@@ -66,6 +66,8 @@ void CActiveMasternode::ManageStatus()
                 LogPrintf("%s - not capable: %s\n", __func__, notCapableReason);
             }
 
+        }
+
         notCapableReason = "Waiting for start message from controller.";
         return;
     }
