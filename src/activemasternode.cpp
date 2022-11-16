@@ -50,30 +50,17 @@ void CActiveMasternode::ManageStatus()
         status = ACTIVE_MASTERNODE_NOT_CAPABLE;
         notCapableReason = "";
 
-        if (pwalletMain->IsLocked()) {
-            notCapableReason = "Wallet is locked.";
-            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
-            return;
-        }
-
-        if (!GetLocal(service)) {
-            notCapableReason = "Can't detect external address.";
-            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
-            return;
-        }
-
-        // The service needs the correct default port to work properly
-        if (!CMasternodeBroadcast::CheckDefaultPort(service, errorMessage, "CActiveMasternode::ManageStatus()"))
-            return;
-
         LogPrintf("CActiveMasternode::ManageStatus() - Checking inbound connection to '%s'\n", service.ToString());
 
         CAddress addr(service, NODE_NETWORK);
-        if (!g_connman->OpenNetworkConnection(addr, true, nullptr)) {
-            notCapableReason = "Could not connect to " + service.ToString();
-            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
-            return;
-        }
+        if (!g_connman->IsNodeConnected(addr)) {
+            CNode* node = g_connman->ConnectNode(addr);
+            if (!node) {
+                notCapableReason =
+                        "Masternode address:port connection availability test failed, could not open a connection to the public masternode address (" +
+                        service.ToString() + ")";
+                LogPrintf("%s - not capable: %s\n", __func__, notCapableReason);
+            }
 
         notCapableReason = "Waiting for start message from controller.";
         return;

@@ -1099,14 +1099,6 @@ void CConnman::AcceptConnection(const ListenSocket& hListenSocket) {
         return;
     }
 
-    CNode* dupnode = FindNode((CNetAddr)addr);
-    if (dupnode) {
-        // drop nodes already connected
-        LogPrint(BCLog::NET, "dropped, %s already connected\n",addr.ToStringIP());
-        CloseSocket(hSocket);
-        return;
-    }
-
     if (nInbound >= nMaxConnections - nMaxOutbound) {
         // try to evict 10% of the inbound connections
         int n = std::max(1, (nMaxConnections - nMaxOutbound) / 10);
@@ -2633,6 +2625,16 @@ bool CConnman::ForNode(NodeId id, std::function<bool(CNode* pnode)> func)
         }
     }
     return found != nullptr && NodeFullyConnected(found) && func(found);
+}
+
+bool CConnman::IsNodeConnected(const CAddress& addr)
+{
+    return FindNode(addr.ToStringIPPort());
+}
+
+CNode* CConnman::ConnectNode(CAddress addrConnect)
+{
+    return ConnectNode(addrConnect, nullptr, true);
 }
 
 // valid, reachable and routable address (except for RegTest)

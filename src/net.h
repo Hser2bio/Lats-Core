@@ -214,6 +214,10 @@ public:
     void RelayTransactionLockReq(const CTransaction& tx, bool relayToAll = false);
     void RelayInv(CInv& inv);
 
+    bool IsNodeConnected(const CAddress& addr);
+    // Retrieves a connected peer (if connection success). Used only to check peer address availability for now.
+    CNode* ConnectNode(CAddress addrConnect);
+
     // Addrman functions
     size_t GetAddressCount() const;
     void SetServices(const CService &addr, ServiceFlags nServices);
