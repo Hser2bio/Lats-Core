@@ -685,13 +685,17 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
     for (auto& activeMasternode : amnodeman.GetActiveMasternodes()) {
         if (fMasterNode && 
             activeMasternode.vin != nullopt &&
-            vin.prevout == activeMasternode.vin->prevout && 
-            pubKeyMasternode == activeMasternode.pubKeyMasternode) return true;
+            vin.prevout == activeMasternode.vin->prevout &&
+            pubKeyMasternode == activeMasternode.pubKeyMasternode &&
+            activeMasternode.GetStatus() == ACTIVE_MASTERNODE_STARTED) {
+                return true;
+            }
     }
 
     // incorrect ping or its sigTime
-    if(lastPing.IsNull() || !lastPing.CheckAndUpdate(nDoS, false, true)) return false;
-
+    if(lastPing.IsNull() || !lastPing.CheckAndUpdate(nDoS, false, true)) {
+        return false;
+    }
     // search existing Masternode list
     CMasternode* pmn = mnodeman.Find(vin);
 
