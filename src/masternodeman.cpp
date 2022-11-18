@@ -285,8 +285,8 @@ void CMasternodeMan::CheckAndRemove(bool forceExpiredRemoval)
             // allow us to ask for this masternode again if we see another ping
             std::map<COutPoint, int64_t>::iterator it2 = mWeAskedForMasternodeListEntry.begin();
             while (it2 != mWeAskedForMasternodeListEntry.end()) {
-                if ((*it2).first == (*it).vin.prevout) {
-                    it2 = mWeAskedForMasternodeListEntry.erase(it2);
+                if ((*it2).first == (**it).vin.prevout) {
+                    mWeAskedForMasternodeListEntry.erase(it2++);
                 } else {
                     ++it2;
                 }
@@ -830,28 +830,25 @@ void CMasternodeMan::ProcessGetMNList(CNode* pfrom, std::string& strCommand, CDa
 
 
     int nInvCount = 0;
-    {
-        LOCK(cs);
-        for (CMasternode& mn : vMasternodes) {
-            if (mn.addr.IsRFC1918()) continue; //local network
+    for (CMasternode& mn : vMasternodes) {
+         if (mn.addr.IsRFC1918()) continue; //local network
 
-            if (mn.IsEnabled()) {
-                LogPrint(BCLog::MASTERNODE, "dseg - Sending Masternode entry - %s \n", mn.vin.prevout.hash.ToString());
-                if (vin.IsNull() || vin == mn.vin) {
-                    CMasternodeBroadcast mnb = CMasternodeBroadcast(mn);
-                    uint256 hash = mnb.GetHash();
-                    pfrom->PushInventory(CInv(MSG_MASTERNODE_ANNOUNCE, hash));
-                    nInvCount++;
+         if (mn.IsEnabled()) {
+             LogPrint(BCLog::MASTERNODE, "dseg - Sending Masternode entry - %s \n", mn.vin.prevout.hash.ToString());
+             if (vin == CTxIn() || vin == mn.vin) {
+                 CMasternodeBroadcast mnb = CMasternodeBroadcast(mn);
+                 uint256 hash = mnb.GetHash();
+                 pfrom->PushInventory(CInv(MSG_MASTERNODE_ANNOUNCE, hash));
+                 nInvCount++;
 
-                    if (!mapSeenMasternodeBroadcast.count(hash)) mapSeenMasternodeBroadcast.emplace(hash, mnb);
+                 if (!mapSeenMasternodeBroadcast.count(hash)) mapSeenMasternodeBroadcast.emplace(hash, mnb);
 
-                    if (vin == mn.vin) {
-                        LogPrint(BCLog::MASTERNODE, "dseg - Sent 1 Masternode entry to peer %i\n", pfrom->GetId());
-                        return 0;
-                    }
-                }
-            }
-        }
+                 if (vin == mn.vin) {
+                     LogPrint(BCLog::MASTERNODE, "dseg - Sent 1 Masternode entry to peer %i\n", pfrom->GetId());
+                     return;
+                 }
+             }
+         }
     }
 
     if (vin == CTxIn()) {

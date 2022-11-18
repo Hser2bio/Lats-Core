@@ -263,19 +263,6 @@ void CMasternode::Check(bool forceCheck)
             activeState = MASTERNODE_VIN_SPENT;
             return;
         }
-        
-        // ----------- burn address scanning -----------
-        if (!consensus.mBurnAddresses.empty()) {
-
-            std::string addr = EncodeDestination(pubKeyCollateralAddress.GetID());
-
-            if (consensus.mBurnAddresses.find(addr) != consensus.mBurnAddresses.end() &&
-                consensus.mBurnAddresses.at(addr) < chainActive.Height()
-            ) {
-                activeState = MASTERNODE_VIN_SPENT;
-                return;
-            }
-        }
     }
 
     activeState = MASTERNODE_ENABLED; // OK
@@ -791,9 +778,9 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
                 sigTime, vin.prevout.hash.ToString(), MasternodeCollateralMinConf(), pConfIndex->GetBlockTime());
             return false;
         }
-        if (GetMasternodeNodeCollateral(nConfHeight) != GetMasternodeNodeCollateral(chainActive.Height())) {
+        if (GetMasternodeNodeCollateral(nChainHeight) != GetMasternodeNodeCollateral(chainActive.Height())) {
             LogPrint(BCLog::MASTERNODE,"mnb - Wrong collateral transaction value of %d for Masternode %s (%i conf block is at %d)\n",
-                GetMasternodeNodeCollateral(nConfHeight) / COIN, vin.prevout.hash.ToString(), MASTERNODE_MIN_CONFIRMATIONS, pConfIndex->GetBlockTime());
+                GetMasternodeNodeCollateral(nChainHeight) / COIN, vin.prevout.hash.ToString(), MASTERNODE_MIN_CONFIRMATIONS, pConfIndex->GetBlockTime());
             return false;
         }
     }

@@ -92,18 +92,7 @@ bool CMasternodeSync::MessageDispatcher(CNode* pfrom, std::string& strCommand, C
                 return true;
             }
             case MASTERNODE_SYNC_MNW: {
-                UpdatePeerSyncState(pfrom->GetId(), NetMsgType::GETMNWINNERS, MASTERNODE_SYNC_BUDGET);
-                return true;
-            }
-            case MASTERNODE_SYNC_BUDGET_PROP: {
-                // TODO: This could be a MASTERNODE_SYNC_BUDGET_FIN as well, possibly should decouple the finalization budget sync
-                //  from the MASTERNODE_SYNC_BUDGET_PROP (both are under the BUDGETVOTESYNC message)
-                UpdatePeerSyncState(pfrom->GetId(), NetMsgType::BUDGETVOTESYNC, MASTERNODE_SYNC_FINISHED);
-                LogPrintf("SYNC FINISHED!\n");
-                return true;
-            }
-            case MASTERNODE_SYNC_BUDGET_FIN: {
-                // No need to handle this one, is handled by the proposals sync message for now..
+                UpdatePeerSyncState(pfrom->GetId(), NetMsgType::GETMNWINNERS, MASTERNODE_SYNC_FINISHED);
                 return true;
             }
         }
@@ -170,9 +159,6 @@ void CMasternodeSync::SyncRegtest(CNode* pnode)
         RequestDataTo(pnode, NetMsgType::GETMNLIST, false, CTxIn());
     } else if (RequestedMasternodeAssets == MASTERNODE_SYNC_MNW) {
         RequestDataTo(pnode, NetMsgType::GETMNWINNERS, false, mnodeman.CountEnabled());
-    } else if (RequestedMasternodeAssets == MASTERNODE_SYNC_BUDGET) {
-        // sync masternode votes
-        RequestDataTo(pnode, NetMsgType::BUDGETVOTESYNC, false, uint256());
     } else if (RequestedMasternodeAssets == MASTERNODE_SYNC_FINISHED) {
         LogPrintf("REGTEST SYNC FINISHED!\n");
     }
