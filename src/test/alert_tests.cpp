@@ -1,6 +1,5 @@
 // Copyright (c) 2013 The Bitcoin Core developers
-// Copyright (c) 2019-2020 The PIVX developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
+// Copyright (c) 2019-2020 The LiquidLabs Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -9,7 +8,7 @@
 //
 
 #include "chainparams.h"
-#include "util.h"
+#include "util/system.h"
 
 #include "test/test_bitcoin.h"
 

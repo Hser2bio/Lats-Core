@@ -1,5 +1,4 @@
 // Copyright (c) 2018-2019 The Bitcoin Core developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -23,5 +22,10 @@ void ThreadSetInternalName(std::string&&);
 const std::string& ThreadGetInternalName();
 
 } // namespace util
+
+namespace ctpl {
+    class thread_pool;
+}
+void RenameThreadPool(ctpl::thread_pool& tp, const char* baseName);
 
 #endif // BITCOIN_UTIL_THREADNAMES_H
