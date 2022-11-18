@@ -916,7 +916,7 @@ void InitLogging()
     LogPrintf("LATS version %s (%s)\n", version_string, CLIENT_DATE);
 }
 
-/** Initialize __decenomy__.
+/** Initialize Lats.
  *  @pre Parameters should be parsed and config file should be read.
  */
 bool AppInit2()
