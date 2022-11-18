@@ -1,12 +1,12 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
 // Copyright (c) 2014-2015 The Dash developers
-// Copyright (c) 2015-2020 The PIVX developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
+// Copyright (c) 2015-2020 The LiquidLabs Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "bitcoinunits.h"
 #include "chainparams.h"
+#include "policy/feerate.h"
 #include "primitives/transaction.h"
 
 #include <QSettings>
@@ -22,18 +22,18 @@ BitcoinUnits::BitcoinUnits(QObject* parent) : QAbstractListModel(parent),
 QList<BitcoinUnits::Unit> BitcoinUnits::availableUnits()
 {
     QList<BitcoinUnits::Unit> unitlist;
-    unitlist.append(PIV);
-    unitlist.append(mPIV);
-    unitlist.append(uPIV);
+    unitlist.append(LATS);
+    unitlist.append(mLATS);
+    unitlist.append(uLATS);
     return unitlist;
 }
 
 bool BitcoinUnits::valid(int unit)
 {
     switch (unit) {
-    case PIV:
-    case mPIV:
-    case uPIV:
+    case LATS:
+    case mLATS:
+    case uLATS:
         return true;
     default:
         return false;
@@ -43,39 +43,41 @@ bool BitcoinUnits::valid(int unit)
 QString BitcoinUnits::id(int unit)
 {
     switch (unit) {
-    case PIV:
-        return QString("LATS");
-    case mPIV:
-        return QString("mLATS");
-    case uPIV:
-        return QString::fromUtf8("uLATS");
+    case LATS:
+        return QString("lats");
+    case mLATS:
+        return QString("mlats");
+    case uLATS:
+        return QString::fromUtf8("ulats");
     default:
         return QString("???");
     }
 }
 
-QString BitcoinUnits::name(int unit)
+QString BitcoinUnits::name(int unit, bool isZlats)
 {
     const QString CURR_UNIT = QString(CURRENCY_UNIT.c_str());
-    if (Params().NetworkID() == CBaseChainParams::MAIN) {
+    QString z = "";
+    if(isZlats) z = "z";
+    if (Params().NetworkIDString() == CBaseChainParams::MAIN) {
         switch (unit) {
-        case PIV:
-            return CURR_UNIT;
-        case mPIV:
-            return QString("m") + CURR_UNIT;
-        case uPIV:
-            return QString::fromUtf8("μ") + CURR_UNIT;
+        case LATS:
+            return z + CURR_UNIT;
+        case mLATS:
+            return z + QString("m") + CURR_UNIT;
+        case uLATS:
+            return z + QString::fromUtf8("μ") + CURR_UNIT;
         default:
             return QString("???");
         }
     } else {
         switch (unit) {
-        case PIV:
-            return QString("t") + CURR_UNIT;
-        case mPIV:
-            return QString("mt") + CURR_UNIT;
-        case uPIV:
-            return QString::fromUtf8("μt") + CURR_UNIT;
+        case LATS:
+            return z + QString("t") + CURR_UNIT;
+        case mLATS:
+            return z + QString("mt") + CURR_UNIT;
+        case uLATS:
+            return z + QString::fromUtf8("μt") + CURR_UNIT;
         default:
             return QString("???");
         }
@@ -85,24 +87,24 @@ QString BitcoinUnits::name(int unit)
 QString BitcoinUnits::description(int unit)
 {
     const QString CURR_UNIT = QString(CURRENCY_UNIT.c_str());
-    if (Params().NetworkID() == CBaseChainParams::MAIN) {
+    if (Params().NetworkIDString() == CBaseChainParams::MAIN) {
         switch (unit) {
-        case PIV:
+        case LATS:
             return CURR_UNIT;
-        case mPIV:
+        case mLATS:
             return QString("Milli-") + CURR_UNIT + QString(" (1 / 1" THIN_SP_UTF8 "000)");
-        case uPIV:
+        case uLATS:
             return QString("Micro-") + CURR_UNIT + QString(" (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
         }
     } else {
         switch (unit) {
-        case PIV:
+        case LATS:
             return QString("Test") + CURR_UNIT;
-        case mPIV:
+        case mLATS:
             return QString("Milli-Test") + CURR_UNIT + QString(" (1 / 1" THIN_SP_UTF8 "000)");
-        case uPIV:
+        case uLATS:
             return QString("Micro-Test") + CURR_UNIT + QString(" (1 / 1" THIN_SP_UTF8 "000" THIN_SP_UTF8 "000)");
         default:
             return QString("???");
@@ -113,11 +115,11 @@ QString BitcoinUnits::description(int unit)
 qint64 BitcoinUnits::factor(int unit)
 {
     switch (unit) {
-    case PIV:
+    case LATS:
         return 100000000;
-    case mPIV:
+    case mLATS:
         return 100000;
-    case uPIV:
+    case uLATS:
         return 100;
     default:
         return 100000000;
@@ -127,11 +129,11 @@ qint64 BitcoinUnits::factor(int unit)
 int BitcoinUnits::decimals(int unit)
 {
     switch (unit) {
-    case PIV:
+    case LATS:
         return 8;
-    case mPIV:
+    case mLATS:
         return 5;
-    case uPIV:
+    case uLATS:
         return 2;
     default:
         return 0;
@@ -213,7 +215,7 @@ QString BitcoinUnits::formatHtmlWithUnit(int unit, const CAmount& amount, bool p
     return QString("<span style='white-space: nowrap;'>%1</span>").arg(str);
 }
 
-QString BitcoinUnits::floorWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators, bool cleanRemainderZeros)
+QString BitcoinUnits::floorWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators, bool cleanRemainderZeros, bool isZLATS)
 {
     QSettings settings;
     int digits = settings.value("digits").toInt();
@@ -230,12 +232,12 @@ QString BitcoinUnits::floorWithUnit(int unit, const CAmount& amount, bool plussi
         }
     }
 
-    return result + QString(" ") + name(unit);
+    return result + QString(" ") + name(unit, isZLATS);
 }
 
-QString BitcoinUnits::floorHtmlWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators, bool cleanRemainderZeros)
+QString BitcoinUnits::floorHtmlWithUnit(int unit, const CAmount& amount, bool plussign, SeparatorStyle separators, bool cleanRemainderZeros, bool isZLATS)
 {
-    QString str(floorWithUnit(unit, amount, plussign, separators, cleanRemainderZeros));
+    QString str(floorWithUnit(unit, amount, plussign, separators, cleanRemainderZeros, isZLATS));
     str.replace(QChar(THIN_SP_CP), QString(COMMA_HTML));
     return QString("<span style='white-space: nowrap;'>%1</span>").arg(str);
 }

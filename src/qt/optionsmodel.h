@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017-2020 The PIVX developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
+// Copyright (c) 2017-2020 The LiquidLabs Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -8,13 +7,10 @@
 #define BITCOIN_QT_OPTIONSMODEL_H
 
 #include "amount.h"
+#include <cstdint>
 
 #include <QAbstractListModel>
 #include <QSettings>
-
-QT_BEGIN_NAMESPACE
-class QNetworkProxy;
-QT_END_NAMESPACE
 
 /** Interface from Qt to configuration data structure for LATS client.
    To Qt, the options are presented as a list with the different options
@@ -33,6 +29,7 @@ public:
         StartAtStartup,      // bool
         MinimizeToTray,      // bool
         MapPortUPnP,         // bool
+        MapPortNatpmp,       // bool
         MinimizeOnClose,     // bool
         ProxyUse,            // bool
         ProxyIP,             // QString
@@ -46,15 +43,17 @@ public:
         ThreadsScriptVerif,  // int
         DatabaseCache,       // int
         SpendZeroConfChange, // bool
+        ZeromintEnable,      // bool
+        ZeromintAddresses,   // bool
+        ZeromintPercentage,  // int
+        ZeromintPrefDenom,   // int
         HideCharts,          // bool
         HideZeroBalances,    // bool
         HideOrphans,    // bool
-        AnonymizePivxAmount, //int
+        AnonymizeLatsAmount, //int
         ShowMasternodesTab,  // bool
         Listen,              // bool
-        StakeSplitThreshold,    // CAmount (LongLong)
-        fUseCustomFee,          // bool
-        nCustomFee,             // CAmount (LongLong)
+        ShowColdStakingScreen,  // bool
         OptionIDRowCount,
     };
 
@@ -67,13 +66,6 @@ public:
     void refreshDataView();
     /** Updates current unit in memory, settings and emits displayUnitChanged(newUnit) signal */
     void setDisplayUnit(const QVariant& value);
-    /* Update StakeSplitThreshold's value in wallet */
-    void setStakeSplitThreshold(const CAmount value);
-    double getSSTMinimum() const;
-    bool isSSTValid();
-    /* Update Custom Fee value in wallet */
-    void setUseCustomFee(bool fUse);
-    void setCustomFeeValue(const CAmount& value);
 
     /* Explicit getters */
     bool isHideCharts() { return fHideCharts; }
@@ -81,7 +73,6 @@ public:
     bool getMinimizeOnClose() { return fMinimizeOnClose; }
     int getDisplayUnit() { return nDisplayUnit; }
     QString getThirdPartyTxUrls() { return strThirdPartyTxUrls; }
-    bool getProxySettings(QNetworkProxy& proxy) const;
     bool getCoinControlFeatures() { return fCoinControlFeatures; }
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
     const QString& getLang() { return language; }
@@ -89,9 +80,17 @@ public:
     /* Restart flag helper */
     void setRestartRequired(bool fRequired);
     bool isRestartRequired();
-    void setSSTChanged(bool fChanged);
-    bool isSSTChanged();
     bool resetSettings;
+
+    bool isColdStakingScreenEnabled() { return showColdStakingScreen; }
+    bool invertColdStakingScreenStatus() {
+        setData(
+                createIndex(ShowColdStakingScreen, 0),
+                !isColdStakingScreenEnabled(),
+                Qt::EditRole
+        );
+        return showColdStakingScreen;
+    }
 
     // Reset
     void setMainDefaultOptions(QSettings& settings, bool reset = false);
@@ -108,6 +107,7 @@ private:
     int nDisplayUnit;
     QString strThirdPartyTxUrls;
     bool fCoinControlFeatures;
+    bool showColdStakingScreen;
     bool fHideCharts;
     bool fHideZeroBalances;
     bool fHideOrphans;
@@ -120,6 +120,7 @@ private:
 Q_SIGNALS:
     void displayUnitChanged(int unit);
     void coinControlFeaturesChanged(bool);
+    void showHideColdStakingScreen(bool);
     void hideChartsChanged(bool);
     void hideZeroBalancesChanged(bool);
     void hideOrphansChanged(bool);

@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
-// Copyright (c) 2017-2019 The PIVX developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
+// Copyright (c) 2017-2019 The LiquidLabs Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -17,6 +16,7 @@
 
 class ClientModel;
 class RPCTimerInterface;
+class WalletModel;
 
 namespace Ui
 {
@@ -38,14 +38,7 @@ public:
     ~RPCConsole();
 
     void setClientModel(ClientModel* model);
-
-    enum MessageClass {
-        MC_ERROR,
-        MC_DEBUG,
-        CMD_REQUEST,
-        CMD_REPLY,
-        CMD_ERROR
-    };
+    void setWalletModel(WalletModel* model);
 
 protected:
     virtual bool eventFilter(QObject* obj, QEvent* event);
@@ -106,7 +99,7 @@ public Q_SLOTS:
     void showPeers();
     /** Switch to wallet-repair tab and show */
     void showRepair();
-    /** Open external (default) editor with LATS.conf */
+    /** Open external (default) editor with lats.conf */
     void showConfEditor();
     /** Open external (default) editor with masternode.conf */
     void showMNConfEditor();
@@ -149,6 +142,7 @@ private:
 
     Ui::RPCConsole* ui;
     ClientModel* clientModel;
+    WalletModel* walletModel;
     QStringList history;
     int historyPtr;
     NodeId cachedNodeid;

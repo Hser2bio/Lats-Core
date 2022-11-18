@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2014 The Bitcoin developers
-// Copyright (c) 2017-2019 The PIVX developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
+// Copyright (c) 2017-2019 The LiquidLabs Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -26,20 +25,11 @@ public:
     QDateTime date;
     SendCoinsRecipient recipient;
 
-    ADD_SERIALIZE_METHODS;
-
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action)
-    {
-        unsigned int nDate = date.toTime_t();
-
-        READWRITE(nVersion);
-        READWRITE(id);
-        READWRITE(nDate);
-        READWRITE(recipient);
-
-        if (ser_action.ForRead())
-            date = QDateTime::fromTime_t(nDate);
+    SERIALIZE_METHODS(RecentRequestEntry, obj) {
+        unsigned int date_timet;
+        SER_WRITE(obj, date_timet = obj.date.toTime_t());
+        READWRITE(obj.nVersion, obj.id, date_timet, obj.recipient);
+        SER_READ(obj, obj.date = QDateTime::fromTime_t(date_timet));
     }
 };
 
@@ -54,7 +44,7 @@ private:
     Qt::SortOrder order;
 };
 
-/** Model for list of recently generated payment requests / LATS: URIs.
+/** Model for list of recently generated payment requests / lats: URIs.
  * Part of wallet model.
  */
 class RecentRequestsTableModel : public QAbstractTableModel

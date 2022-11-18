@@ -1,6 +1,5 @@
 // Copyright (c) 2011-2013 The Bitcoin developers
-// Copyright (c) 2017-2020 The PIVX developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
+// Copyright (c) 2017-2020 The LiquidLabs Developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -34,7 +33,7 @@ public:
     };
 
     enum RoleIndex {
-        TypeRole = Qt::UserRole /**< Type of address (#Send, #Receive) */
+        TypeRole = Qt::UserRole /**< Type of address (#Send, #Receive, #ColdStaking, #ColdStakingSend, #Delegator, #Delegable) */
     };
 
     /** Return status of edit/insert operation */
@@ -49,14 +48,24 @@ public:
 
     static const QString Send;    /**< Specifies send address */
     static const QString Receive; /**< Specifies receive address */
+    static const QString Zerocoin; /**< Specifies stealth address */
+    static const QString Delegator; /**< Specifies cold staking addresses which delegated tokens to this wallet and ARE being staked */
+    static const QString Delegable; /**< Specifies cold staking addresses which delegated tokens to this wallet*/
+    static const QString ColdStaking; /**< Specifies cold staking own addresses */
+    static const QString ColdStakingSend; /**< Specifies send cold staking addresses (simil 'contacts')*/
+    static const QString ShieldedReceive; /**< Specifies shielded send address */
+    static const QString ShieldedSend; /**< Specifies shielded receive address */
 
-    
     /** @name Methods overridden from QAbstractTableModel
         @{*/
     int rowCount(const QModelIndex& parent) const;
     int columnCount(const QModelIndex& parent) const;
     int sizeSend() const;
     int sizeRecv() const;
+    int sizeDell() const;
+    int sizeColdSend() const;
+    int sizeShieldedSend() const;
+    int sizeSendAll() const;
     void notifyChange(const QModelIndex &index);
     QVariant data(const QModelIndex& index, int role) const;
     bool setData(const QModelIndex& index, const QVariant& value, int role);
@@ -86,18 +95,23 @@ public:
     std::string purposeForAddress(const std::string& address) const;
 
     /**
+     * Checks if the address is whitelisted
+     */
+    bool isWhitelisted(const std::string& address) const;
+
+    /**
      * Return last unused address
      */
-    QString getAddressToShow() const;
+    QString getAddressToShow(bool shielded = false) const;
 
     EditStatus getEditStatus() const { return editStatus; }
 
 private:
-    WalletModel* walletModel;
-    CWallet* wallet;
-    AddressTablePriv* priv;
-    QStringList columns;
-    EditStatus editStatus;
+    WalletModel* walletModel{nullptr};
+    CWallet* wallet{nullptr};
+    AddressTablePriv* priv{nullptr};
+    QStringList columns{};
+    EditStatus editStatus{OK};
 
     /** Notify listeners that data changed. */
     void emitDataChanged(int index);
@@ -106,6 +120,7 @@ public Q_SLOTS:
     /* Update address list from core.
      */
     void updateEntry(const QString& address, const QString& label, bool isMine, const QString& purpose, int status);
+    void updateEntry(const QString &pubCoin, const QString &isUsed, int status);
     friend class AddressTablePriv;
 };
 
