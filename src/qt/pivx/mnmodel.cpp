@@ -39,8 +39,16 @@ void MNModel::updateMNList()
             pmn->activeState = CMasternode::MASTERNODE_MISSING;
         }
         nodes.insert(QString::fromStdString(mne.getAlias()), std::make_pair(QString::fromStdString(mne.getIp()), pmn));
-        if (walletModel) {
-            collateralTxAccepted.insert(mne.getTxHash(), walletModel->getWalletTxDepth(txHash) >= MASTERNODE_MIN_CONFIRMATIONS);
+        if (pwalletMain) {
+            bool txAccepted = false;
+            {
+                LOCK2(cs_main, pwalletMain->cs_wallet);
+                const CWalletTx *walletTx = pwalletMain->GetWalletTx(txHash);
+                if (walletTx && walletTx->GetDepthInMainChain() >= MasternodeCollateralMinConf()) {
+                    txAccepted = true;
+                }
+            }
+            collateralTxAccepted.insert(mne.getTxHash(), txAccepted);
         }
     }
     Q_EMIT dataChanged(index(0, 0, QModelIndex()), index(end, 5, QModelIndex()) );
