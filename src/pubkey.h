@@ -1,12 +1,11 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2016-2018 The PIVX developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
+// Copyright (c) 2016-2018 The LiquidLabs Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-#ifndef PIVX_PUBKEY_H
-#define PIVX_PUBKEY_H
+#ifndef LATS_PUBKEY_H
+#define LATS_PUBKEY_H
 
 #include "hash.h"
 #include "serialize.h"
@@ -107,6 +106,7 @@ public:
 
     //! Simple read-only vector-like interface to the pubkey data.
     unsigned int size() const { return GetLen(vch[0]); }
+    const unsigned char* data() const { return vch; }
     const unsigned char* begin() const { return vch; }
     const unsigned char* end() const { return vch + size(); }
     const unsigned char& operator[](unsigned int pos) const { return vch[pos]; }
@@ -208,16 +208,6 @@ public:
 
 };
 
-struct CPubKeyCheapHasher {
-    int operator()(const CPubKey& pubKey) const {
-        int hash = pubKey.size();
-        for(auto &i : pubKey.Raw()) {
-            hash ^= i + 0x9e3779b9 + (hash << 6) + (hash >> 2);
-        }
-        return hash;
-    }
-};
-
 struct CExtPubKey {
     unsigned char nDepth;
     unsigned char vchFingerprint[4];
@@ -275,4 +265,4 @@ public:
     ~ECCVerifyHandle();
 };
 
-#endif // PIVX_PUBKEY_H
+#endif // LATS_PUBKEY_H

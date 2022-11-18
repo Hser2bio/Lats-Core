@@ -1,18 +1,19 @@
 // Copyright (c) 2009-2014 The Bitcoin developers
-// Copyright (c) 2017-2020 The PIVX developers
-// Copyright (c) 2021-2022 The DECENOMY Core Developers
+// Copyright (c) 2017-2020 The LiquidLabs Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #ifndef BITCOIN_CRYPTER_H
 #define BITCOIN_CRYPTER_H
 
-#include "allocators.h"
 #include "keystore.h"
 #include "serialize.h"
 #include "streams.h"
+#include "support/allocators/zeroafterfree.h"
 
 class uint256;
+
+#include <atomic>
 
 const unsigned int WALLET_CRYPTO_KEY_SIZE = 32;
 const unsigned int WALLET_CRYPTO_SALT_SIZE = 8;
@@ -47,17 +48,7 @@ public:
     //! such as the various parameters to scrypt
     std::vector<unsigned char> vchOtherDerivationParameters;
 
-    ADD_SERIALIZE_METHODS;
-
-    template <typename Stream, typename Operation>
-    inline void SerializationOp(Stream& s, Operation ser_action)
-    {
-        READWRITE(vchCryptedKey);
-        READWRITE(vchSalt);
-        READWRITE(nDerivationMethod);
-        READWRITE(nDeriveIterations);
-        READWRITE(vchOtherDerivationParameters);
-    }
+    SERIALIZE_METHODS(CMasterKey, obj) { READWRITE(obj.vchCryptedKey, obj.vchSalt, obj.nDerivationMethod, obj.nDeriveIterations, obj.vchOtherDerivationParameters); }
 
     CMasterKey()
     {
@@ -135,20 +126,25 @@ bool DecryptSecret(const CKeyingMaterial& vMasterKey, const std::vector<unsigned
 class CCryptoKeyStore : public CBasicKeyStore
 {
 private:
-    //! if fUseCrypto is true, mapKeys must be empty
+    //! if fUseCrypto is true, mapKeys and mapSaplingSpendingKeys must be empty
     //! if fUseCrypto is false, vMasterKey must be empty
-    bool fUseCrypto;
+    std::atomic<bool> fUseCrypto;
 
 protected:
     // TODO: In the future, move this variable to the wallet class directly following upstream's structure.
     CKeyingMaterial vMasterKey;
-    
+    // Sapling
+    CryptedSaplingSpendingKeyMap mapCryptedSaplingSpendingKeys;
+
     bool SetCrypted();
 
     //! will encrypt previously unencrypted keys
     bool EncryptKeys(CKeyingMaterial& vMasterKeyIn);
 
     CryptedKeyMap mapCryptedKeys;
+
+    // Unlock Sapling keys
+    bool UnlockSaplingKeys(const CKeyingMaterial& vMasterKeyIn, bool fDecryptionThoroughlyChecked);
 
 public:
     CCryptoKeyStore() : fUseCrypto(false) { }
@@ -198,6 +194,13 @@ public:
             mi++;
         }
     }
+
+    //! Sapling
+    virtual bool AddCryptedSaplingSpendingKey(
+            const libzcash::SaplingExtendedFullViewingKey &extfvk,
+            const std::vector<unsigned char> &vchCryptedSecret);
+    bool HaveSaplingSpendingKey(const libzcash::SaplingExtendedFullViewingKey &extfvk) const;
+    bool GetSaplingSpendingKey(const libzcash::SaplingExtendedFullViewingKey &extfvk, libzcash::SaplingExtendedSpendingKey &skOut) const;
 
     /**
      * Wallet status (encrypted, locked) changed.

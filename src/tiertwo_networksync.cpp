@@ -1,13 +1,14 @@
-// Copyright (c) 2020 The PIVX developers
+// Copyright (c) 2020 The LiquidLabs Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or https://www.opensource.org/licenses/mit-license.php.
 
 #include "masternode-sync.h"
 
-#include "spork.h"  // for sporkManager
-#include "masternodeman.h" // for mnodeman
+#include "masternodeman.h"          // for mnodeman
 #include "netmessagemaker.h"
-#include "streams.h"  // for CDataStream
+#include "net_processing.h"         // for Misbehaving
+#include "spork.h"                  // for sporkManager
+#include "streams.h"                // for CDataStream
 
 
 // Update in-flight message status if needed
@@ -47,7 +48,13 @@ bool CMasternodeSync::MessageDispatcher(CNode* pfrom, std::string& strCommand, C
 
     if (strCommand == NetMsgType::GETMNLIST) {
         // Get Masternode list or specific entry
-        mnodeman.ProcessGetMNList(pfrom, strCommand, vRecv);
+        CTxIn vin;
+        vRecv >> vin;
+        int banScore = mnodeman.ProcessGetMNList(pfrom, vin);
+        if (banScore > 0) {
+            LOCK(cs_main);
+            Misbehaving(pfrom->GetId(), banScore);
+        }
         return true;
     }
 
@@ -59,11 +66,12 @@ bool CMasternodeSync::MessageDispatcher(CNode* pfrom, std::string& strCommand, C
         vRecv >> spork;
         int banScore = sporkManager.ProcessSporkMsg(spork);
         if (banScore > 0) {
-            // add misbehaving..
-            return error("Failed to process spork message");
+            LOCK(cs_main);
+            Misbehaving(pfrom->GetId(), banScore);
+            return true;
         }
         // All good, Update in-flight message status if needed
-        if (!UpdatePeerSyncState(pfrom->GetId(), NetMsgType::GETSPORKS, MASTERNODE_SYNC_LIST)) {
+        if (!UpdatePeerSyncState(pfrom->GetId(), NetMsgType::GETSPORKS, GetNextAsset(MASTERNODE_SYNC_SPORKS))) {
             // This could happen because of the message thread is requesting the sporks alone..
             // So.. for now, can just update the peer status and move it to the next state if the end message arrives
             if (spork.nSporkID == SPORK_INVALID) {
@@ -85,14 +93,27 @@ bool CMasternodeSync::MessageDispatcher(CNode* pfrom, std::string& strCommand, C
         int nCount;
         vRecv >> nItemID >> nCount;
 
+        // Update stats
+        ProcessSyncStatusMsg(nItemID, nCount);
+
         // this means we will receive no further communication on the first sync
         switch (nItemID) {
             case MASTERNODE_SYNC_LIST: {
-                UpdatePeerSyncState(pfrom->GetId(), NetMsgType::GETMNLIST, MASTERNODE_SYNC_MNW);
+                UpdatePeerSyncState(pfrom->GetId(), NetMsgType::GETMNLIST, GetNextAsset(nItemID));
                 return true;
             }
             case MASTERNODE_SYNC_MNW: {
-                UpdatePeerSyncState(pfrom->GetId(), NetMsgType::GETMNWINNERS, MASTERNODE_SYNC_FINISHED);
+                UpdatePeerSyncState(pfrom->GetId(), NetMsgType::GETMNWINNERS, GetNextAsset(nItemID));
+                return true;
+            }
+            case MASTERNODE_SYNC_BUDGET_PROP: {
+                // TODO: This could be a MASTERNODE_SYNC_BUDGET_FIN as well, possibly should decouple the finalization budget sync
+                //  from the MASTERNODE_SYNC_BUDGET_PROP (both are under the BUDGETVOTESYNC message)
+                UpdatePeerSyncState(pfrom->GetId(), NetMsgType::BUDGETVOTESYNC, GetNextAsset(nItemID));
+                return true;
+            }
+            case MASTERNODE_SYNC_BUDGET_FIN: {
+                // No need to handle this one, is handled by the proposals sync message for now..
                 return true;
             }
         }
@@ -110,12 +131,12 @@ void CMasternodeSync::PushMessage(CNode* pnode, const char* msg, Args&&... args)
 template <typename... Args>
 void CMasternodeSync::RequestDataTo(CNode* pnode, const char* msg, bool forceRequest, Args&&... args)
 {
-    const auto& it = peersSyncState.find(pnode->id);
+    const auto& it = peersSyncState.find(pnode->GetId());
     bool exist = it != peersSyncState.end();
     if (!exist || forceRequest) {
         // Erase it if this is a forced request
         if (exist) {
-            peersSyncState.at(pnode->id).mapMsgData.erase(msg);
+            peersSyncState.at(pnode->GetId()).mapMsgData.erase(msg);
         }
         // send the message
         PushMessage(pnode, msg, std::forward<Args>(args)...);
@@ -123,7 +144,7 @@ void CMasternodeSync::RequestDataTo(CNode* pnode, const char* msg, bool forceReq
         // Add data to the tier two peers sync state
         TierTwoPeerData peerData;
         peerData.mapMsgData.emplace(msg, std::make_pair(GetTime(), false));
-        peersSyncState.emplace(pnode->id, peerData);
+        peersSyncState.emplace(pnode->GetId(), peerData);
     } else {
         // Check if we have sent the message or not
         TierTwoPeerData& peerData = it->second;
@@ -152,6 +173,12 @@ void CMasternodeSync::RequestDataTo(CNode* pnode, const char* msg, bool forceReq
 
 void CMasternodeSync::SyncRegtest(CNode* pnode)
 {
+    // skip mn list and winners sync if legacy mn are obsolete
+    if (deterministicMNManager->LegacyMNObsolete() &&
+            (RequestedMasternodeAssets == MASTERNODE_SYNC_LIST || RequestedMasternodeAssets == MASTERNODE_SYNC_MNW)) {
+        RequestedMasternodeAssets = MASTERNODE_SYNC_BUDGET;
+    }
+
     // Initial sync, verify that the other peer answered to all of the messages successfully
     if (RequestedMasternodeAssets == MASTERNODE_SYNC_SPORKS) {
         RequestDataTo(pnode, NetMsgType::GETSPORKS, false);
@@ -159,6 +186,9 @@ void CMasternodeSync::SyncRegtest(CNode* pnode)
         RequestDataTo(pnode, NetMsgType::GETMNLIST, false, CTxIn());
     } else if (RequestedMasternodeAssets == MASTERNODE_SYNC_MNW) {
         RequestDataTo(pnode, NetMsgType::GETMNWINNERS, false, mnodeman.CountEnabled());
+    } else if (RequestedMasternodeAssets == MASTERNODE_SYNC_BUDGET) {
+        // sync masternode votes
+        RequestDataTo(pnode, NetMsgType::BUDGETVOTESYNC, false, uint256());
     } else if (RequestedMasternodeAssets == MASTERNODE_SYNC_FINISHED) {
         LogPrintf("REGTEST SYNC FINISHED!\n");
     }

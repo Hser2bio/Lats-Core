@@ -10,7 +10,7 @@ import operator
 import os
 import sys
 
-OUT_CPP="qt/pivxstrings.cpp"
+OUT_CPP="qt/latsstrings.cpp"
 EMPTY=['""']
 
 def parse_po(text):
@@ -62,7 +62,7 @@ child = Popen([XGETTEXT,'--output=-','-n','--keyword=_'] + files, stdout=PIPE)
 
 messages = parse_po(out.decode('utf-8'))
 
-f = open(OUT_CPP, 'w')
+f = open(OUT_CPP, 'w', encoding="utf8")
 f.write("""
 
 #include <QtGlobal>
