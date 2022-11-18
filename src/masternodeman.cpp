@@ -830,7 +830,8 @@ void CMasternodeMan::ProcessGetMNList(CNode* pfrom, std::string& strCommand, CDa
 
 
     int nInvCount = 0;
-    for (CMasternode& mn : vMasternodes) {
+    std::vector<CMasternode> vmn;
+    for (CMasternode& mn : vmn) {
          if (mn.addr.IsRFC1918()) continue; //local network
 
          if (mn.IsEnabled()) {
