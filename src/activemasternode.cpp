@@ -59,6 +59,35 @@ void CActiveMasternode::ManageStatus()
         status = ACTIVE_MASTERNODE_NOT_CAPABLE;
         notCapableReason = "";
 
+        if (pwalletMain->IsLocked()) {
+            notCapableReason = "Wallet is locked.";
+            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
+            return;
+        }
+
+        if (pwalletMain->GetAvailableBalance() == 0) {
+            notCapableReason = "Hot node, waiting for remote activation.";
+            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
+            return;
+        }
+
+        if (strMasterNodeAddr.empty()) {
+            if (!GetLocal(service)) {
+                notCapableReason = "Can't detect external address. Please use the masternodeaddr configuration option.";
+                LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
+                return;
+            }
+        } else {
+            int nPort;
+            std::string strHost;
+            SplitHostPort(strMasterNodeAddr, nPort, strHost);
+            service = LookupNumeric(strHost.c_str(), nPort);
+        }
+
+        // The service needs the correct default port to work properly
+        if (!CMasternodeBroadcast::CheckDefaultPort(service, errorMessage, "CActiveMasternode::ManageStatus()"))
+            return;
+
         LogPrintf("CActiveMasternode::ManageStatus() - Checking inbound connection to '%s'\n", service.ToString());
 
         CAddress addr(service, NODE_NETWORK);
@@ -120,18 +149,33 @@ bool CActiveMasternode::SendMasternodePing(std::string& errorMessage)
         return false;
     }
 
+    LogPrintf("CActiveMasternode::SendMasternodePing() - Relay Masternode Ping vin = %s\n", vin->ToString());
+
     CMasternodePing mnp(*vin);
     if (!mnp.Sign(keyMasternode, pubKeyMasternode)) {
         errorMessage = "Couldn't sign Masternode Ping";
         return false;
     }
 
+    // Update lastPing for our masternode in Masternode list
     CMasternode* pmn = mnodeman.Find(*vin);
     if (pmn != NULL) {
         if (pmn->IsPingedWithin(MASTERNODE_PING_SECONDS, mnp.sigTime)) {
-            errorMessage = "Too early to send Masternode Ping (Ignoring)";
-            return true;
+            errorMessage = "Too early to send Masternode Ping";
+            return false;
         }
+
+        pmn->lastPing = mnp;
+        mnodeman.mapSeenMasternodePing.insert(std::make_pair(mnp.GetHash(), mnp));
+
+        //mnodeman.mapSeenMasternodeBroadcast.lastPing is probably outdated, so we'll update it
+        CMasternodeBroadcast mnb(*pmn);
+        uint256 hash = mnb.GetHash();
+        if (mnodeman.mapSeenMasternodeBroadcast.count(hash)) mnodeman.mapSeenMasternodeBroadcast[hash].lastPing = mnp;
+
+        mnp.Relay();
+        return true;
+
     } else {
         // Seems like we are trying to send a ping while the Masternode is not registered in the network
         errorMessage = "Masternode List doesn't include our Masternode, shutting down Masternode pinging service! " + vin->ToString();
@@ -139,20 +183,6 @@ bool CActiveMasternode::SendMasternodePing(std::string& errorMessage)
         notCapableReason = errorMessage;
         return false;
     }
-
-    LogPrintf("CActiveMasternode::SendMasternodePing() - Relay Masternode Ping vin = %s\n", vin->ToString());
-
-    // Update lastPing for our masternode in Masternode list
-    pmn->lastPing = mnp;
-    mnodeman.mapSeenMasternodePing.insert(std::make_pair(mnp.GetHash(), mnp));
-
-    //mnodeman.mapSeenMasternodeBroadcast.lastPing is probably outdated, so we'll update it
-    CMasternodeBroadcast mnb(*pmn);
-    uint256 hash = mnb.GetHash();
-    if (mnodeman.mapSeenMasternodeBroadcast.count(hash)) mnodeman.mapSeenMasternodeBroadcast[hash].lastPing = mnp;
-
-    mnp.Relay();
-    return true;
 }
 
 // when starting a Masternode, this can enable to run as a hot wallet with no funds

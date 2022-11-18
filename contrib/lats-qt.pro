@@ -57,8 +57,6 @@ INCLUDEPATH += . \
 
 # Input
 HEADERS += src/activemasternode.h \
-           src/activemasternodeman.h \
-           src/activemasternodeconfig.h \
            src/addrman.h \
            src/alert.h \
            src/allocators.h \
@@ -357,8 +355,6 @@ FORMS += src/qt/forms/addressbookpage.ui \
          src/qt/forms/signverifymessagedialog.ui \
          src/qt/forms/transactiondescdialog.ui
 SOURCES += src/activemasternode.cpp \
-           src/activemasternodeconfig.cpp \
-           src/activemasternodeman.cpp \
            src/addrman.cpp \
            src/alert.cpp \
            src/allocators.cpp \

@@ -87,12 +87,13 @@
 const char * const PIVX_CONF_FILENAME = "lats.conf";
 const char * const PIVX_PID_FILENAME = "lats.pid";
 const char * const PIVX_MASTERNODE_CONF_FILENAME = "masternode.conf";
-const char * const PIVX_ACTIVE_MASTERNODE_CONF_FILENAME = "activemasternode.conf";
 
 
 // LATS only features
 // Masternode
 bool fMasterNode = false;
+std::string strMasterNodePrivKey = "";
+std::string strMasterNodeAddr = "";
 bool fLiteMode = false;
 
 /** Spork enforcement enabled time */
@@ -357,12 +358,6 @@ fs::path GetConfigFile()
 fs::path GetMasternodeConfigFile()
 {
     fs::path pathConfigFile(GetArg("-mnconf", PIVX_MASTERNODE_CONF_FILENAME));
-    return AbsPathForConfigVal(pathConfigFile);
-}
-
-fs::path GetActiveMasternodeConfigFile()
-{
-    fs::path pathConfigFile(GetArg("-activemnconf", PIVX_ACTIVE_MASTERNODE_CONF_FILENAME));
     return AbsPathForConfigVal(pathConfigFile);
 }
 

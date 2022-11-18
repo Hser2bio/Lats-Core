@@ -13,7 +13,6 @@
 #include "guiinterfaceutil.h"
 #include "masternodeconfig.h"
 #include "masternode-payments.h"
-#include "masternodeconfig.h"
 #include "policy/policy.h"
 #include "script/sign.h"
 #include "spork.h"

@@ -7,7 +7,6 @@
 // clang-format off
 #include "main.h"
 #include "activemasternode.h"
-#include "activemasternodeman.h"
 #include "masternode-sync.h"
 #include "masternode-payments.h"
 #include "masternode.h"
@@ -346,6 +345,37 @@ bool CMasternodeSync::SyncWithNode(CNode* pnode, bool isRegTestNet)
 
             int nMnCount = mnodeman.CountEnabled();
             g_connman->PushMessage(pnode, msgMaker.Make(NetMsgType::GETMNWINNERS, nMnCount)); //sync payees
+            RequestedMasternodeAttempt++;
+            return false;
+        }
+
+        if (RequestedMasternodeAssets == MASTERNODE_SYNC_BUDGET) {
+            // We'll start rejecting votes if we accidentally get set as synced too soon
+            if (lastBudgetItem > 0 && lastBudgetItem < GetTime() - MASTERNODE_SYNC_TIMEOUT * 2 && RequestedMasternodeAttempt >= MASTERNODE_SYNC_THRESHOLD) {
+                // Hasn't received a new item in the last five seconds, so we'll move to the
+                GetNextAsset();
+
+                // Try to activate our masternode if possible
+                activeMasternode.ManageStatus();
+                return false;
+            }
+
+            // timeout
+            if (lastBudgetItem == 0 &&
+                (RequestedMasternodeAttempt >= MASTERNODE_SYNC_THRESHOLD * 3 || GetTime() - nAssetSyncStarted > MASTERNODE_SYNC_TIMEOUT * 5)) {
+                // maybe there is no budgets at all, so just finish syncing
+                GetNextAsset();
+                activeMasternode.ManageStatus();
+                return false;
+            }
+
+            if (pnode->HasFulfilledRequest("busync")) return true;
+            pnode->FulfilledRequest("busync");
+
+            if (RequestedMasternodeAttempt >= MASTERNODE_SYNC_THRESHOLD * 3) return false;
+
+            uint256 n;
+            g_connman->PushMessage(pnode, msgMaker.Make(NetMsgType::BUDGETVOTESYNC, n)); //sync masternode votes
             RequestedMasternodeAttempt++;
             return false;
         }

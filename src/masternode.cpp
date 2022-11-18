@@ -682,15 +682,9 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
 {
     // we are a masternode with the same vin (i.e. already activated) and this mnb is ours (matches our Masternode privkey)
     // so nothing to do here for us
-    for (auto& activeMasternode : amnodeman.GetActiveMasternodes()) {
-        if (fMasterNode && 
-            activeMasternode.vin != nullopt &&
-            vin.prevout == activeMasternode.vin->prevout &&
-            pubKeyMasternode == activeMasternode.pubKeyMasternode &&
-            activeMasternode.GetStatus() == ACTIVE_MASTERNODE_STARTED) {
-                return true;
-            }
-    }
+    if (fMasterNode && activeMasternode.vin != nullopt &&
+            vin.prevout == activeMasternode.vin->prevout && pubKeyMasternode == activeMasternode.pubKeyMasternode)
+        return true;
 
     // incorrect ping or its sigTime
     if(lastPing.IsNull() || !lastPing.CheckAndUpdate(nDoS, false, true)) {
@@ -762,11 +756,8 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
     mnodeman.Add(mn);
 
     // if it matches our Masternode privkey, then we've been remotely activated
-    for (auto& activeMasternode : amnodeman.GetActiveMasternodes()) {
-        if (pubKeyMasternode == activeMasternode.pubKeyMasternode &&
-            protocolVersion == PROTOCOL_VERSION) {
-            activeMasternode.EnableHotColdMasterNode(vin, addr);
-        }
+    if (pubKeyMasternode == activeMasternode.pubKeyMasternode && protocolVersion == PROTOCOL_VERSION) {
+        activeMasternode.EnableHotColdMasterNode(vin, addr);
     }
 
     bool isLocal = (addr.IsRFC1918() || addr.IsLocal()) && !Params().IsRegTestNet();
