@@ -22,7 +22,7 @@ Developer Notes
     - [Threads](#threads)
     - [Ignoring IDE/editor files](#ignoring-ideeditor-files)
 - [Development guidelines](#development-guidelines)
-    - [General PIVX Core](#general-pivx-core)
+    - [General LATS Core](#general-lats-core)
     - [Wallet](#wallet)
     - [General C++](#general-c)
     - [C++ data structures](#c-data-structures)
@@ -125,7 +125,7 @@ Refer to [/test/functional/README.md#style-guidelines](/test/functional/README.m
 Coding Style (Doxygen-compatible comments)
 ------------------------------------------
 
-PIVX Core uses [Doxygen](http://www.doxygen.nl/) to generate its official documentation.
+LATS Core uses [Doxygen](http://www.doxygen.nl/) to generate its official documentation.
 
 Use Doxygen-compatible comment blocks for functions, methods, and fields.
 
@@ -215,7 +215,7 @@ to see it.
 
 ### Testnet and Regtest modes
 
-Run with the `-testnet` option to run with "play PIVs (tPIV)" on the test network, if you
+Run with the `-testnet` option to run with "play LATSs (tLATS)" on the test network, if you
 are testing multi-machine code that needs to operate across the internet.
 
 If you are testing something that can run on one machine, run with the `-regtest` option.
@@ -224,7 +224,7 @@ that run in `-regtest` mode.
 
 ### DEBUG_LOCKORDER
 
-PIVX Core is a multi-threaded application, and deadlocks or other
+LATS Core is a multi-threaded application, and deadlocks or other
 multi-threading bugs can be very difficult to track down. The `--enable-debug`
 configure option adds `-DDEBUG_LOCKORDER` to the compiler flags. This inserts
 run-time checks to keep track of which locks are held, and adds warnings to the
@@ -234,15 +234,15 @@ debug.log file if inconsistencies are detected.
 
 Valgrind is a programming tool for memory debugging, memory leak detection, and
 profiling. The repo contains a Valgrind suppressions file
-([`valgrind.supp`](https://github.com/pivx-project/pivx/blob/master/contrib/valgrind.supp))
+([`valgrind.supp`](https://github.com/lats-dao/lats-core/blob/master/contrib/valgrind.supp))
 which includes known Valgrind warnings in our dependencies that cannot be fixed
 in-tree. Example use:
 
 ```shell
-$ valgrind --suppressions=contrib/valgrind.supp src/test/test_pivx
+$ valgrind --suppressions=contrib/valgrind.supp src/test/test_lats
 $ valgrind --suppressions=contrib/valgrind.supp --leak-check=full \
-      --show-leak-kinds=all src/test/test_pivx --log_level=test_suite
-$ valgrind -v --leak-check=full src/pivxd -printtoconsole
+      --show-leak-kinds=all src/test/test_lats --log_level=test_suite
+$ valgrind -v --leak-check=full src/latsd -printtoconsole
 ```
 
 ### Compiling for test coverage
@@ -258,8 +258,50 @@ To enable LCOV report generation during test runs:
 make
 make cov
 
-# A coverage report will now be accessible at `./test_pivx.coverage/index.html`.
+# A coverage report will now be accessible at `./test_lats.coverage/index.html`.
 ```
+
+**Sanitizers**
+LATS can be compiled with various "sanitizers" enabled, which add
+instrumentation for issues regarding things like memory safety, thread race
+conditions, or undefined behavior. This is controlled with the
+`--with-sanitizers` configure flag, which should be a comma separated list of
+sanitizers to enable. The sanitizer list should correspond to supported
+`-fsanitize=` options in your compiler. These sanitizers have runtime overhead,
+so they are most useful when testing changes or producing debugging builds.
+Some examples:
+ ```bash
+ # Enable both the address sanitizer and the undefined behavior sanitizer
+ ./configure --with-sanitizers=address,undefined
+ # Enable the thread sanitizer
+ ./configure --with-sanitizers=thread
+ ```
+If you are compiling with GCC you will typically need to install corresponding
+"san" libraries to actually compile with these flags, e.g. libasan for the
+address sanitizer, libtsan for the thread sanitizer, and libubsan for the
+undefined sanitizer. If you are missing required libraries, the configure script
+will fail with a linker error when testing the sanitizer flags.
+The test suite should pass cleanly with the `thread` and `undefined` sanitizers,
+but there are a number of known problems when using the `address` sanitizer. The
+address sanitizer is known to fail in
+[sha256_sse4::Transform](/src/crypto/sha256_sse4.cpp) which makes it unusable
+unless you also use `--disable-asm` when running configure. We would like to fix
+sanitizer issues, so please send pull requests if you can fix any errors found
+by the address sanitizer (or any other sanitizer).
+Not all sanitizer options can be enabled at the same time, e.g. trying to build
+with `--with-sanitizers=address,thread` will fail in the configure script as
+these sanitizers are mutually incompatible. Refer to your compiler manual to
+learn more about these options and which sanitizers are supported by your
+compiler.
+Additional resources:
+* [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html)
+* [LeakSanitizer](https://clang.llvm.org/docs/LeakSanitizer.html)
+* [MemorySanitizer](https://clang.llvm.org/docs/MemorySanitizer.html)
+* [ThreadSanitizer](https://clang.llvm.org/docs/ThreadSanitizer.html)
+* [UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
+* [GCC Instrumentation Options](https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html)
+* [Google Sanitizers Wiki](https://github.com/google/sanitizers/wiki)
+* [Issue #12691: Enable -fsanitize flags in Travis](https://github.com/bitcoin/bitcoin/issues/12691)
 
 Locking/mutex usage notes
 -------------------------
@@ -301,11 +343,9 @@ Threads
 
 - DumpAddresses : Dumps IP addresses of nodes to peers.dat.
 
-- ThreadFlushWalletDB : Close the wallet.dat file if it hasn't been used in 500ms.
-
 - ThreadRPCServer : Remote procedure call handler, listens on port 8332 for connections and services them.
 
-- BitcoinMiner : Generates PIVs (if wallet is enabled).
+- BitcoinMiner : Generates LATSs (if wallet is enabled).
 
 - Shutdown : Does an orderly shutdown of everything.
 
@@ -315,7 +355,7 @@ Ignoring IDE/editor files
 In closed-source environments in which everyone uses the same IDE it is common
 to add temporary files it produces to the project-wide `.gitignore` file.
 
-However, in open source software such as PIVX Core, where everyone uses
+However, in open source software such as LATS Core, where everyone uses
 their own editors/IDE/tools, it is less common. Only you know what files your
 editor produces and this may change from version to version. The canonical way
 to do this is thus to create your local gitignore. Add this to `~/.gitconfig`:
@@ -345,9 +385,9 @@ Development guidelines
 ============================
 
 A few non-style-related recommendations for developers, as well as points to
-pay attention to for reviewers of PIVX Core code.
+pay attention to for reviewers of LATS Core code.
 
-General PIVX Core
+General LATS Core
 ----------------------
 
 - New features should be exposed on RPC first, then can be made available in the GUI
@@ -460,6 +500,12 @@ class A
   - *Rationale*: Easier to understand what is happening, thus easier to spot mistakes, even for those
   that are not language lawyers
 
+- Use `Span` as function argument when it can operate on any range-like container.
+
+  - *Rationale*: Compared to `Foo(const vector<int>&)` this avoids the need for a (potentially expensive)
+    conversion to vector if the caller happens to have the input stored in another type of container.
+    However, be aware of the pitfalls documented in [span.h](../src/span.h).
+
 Strings and formatting
 ------------------------
 
@@ -508,7 +554,7 @@ Strings and formatting
 
 - For `strprintf`, `LogPrint`, `LogPrintf` formatting characters don't need size specifiers
 
-  - *Rationale*: PIVX Core uses tinyformat, which is type safe. Leave them out to avoid confusion
+  - *Rationale*: LATS Core uses tinyformat, which is type safe. Leave them out to avoid confusion
 
 Variable names
 --------------
@@ -659,10 +705,10 @@ directly upstream without being PRed directly against the project.  They will be
 subtree merge.
 
 Others are external projects without a tight relationship with our project.  Changes to these should also
-be sent upstream but bugfixes may also be prudent to PR against PIVX Core so that they can be integrated
+be sent upstream but bugfixes may also be prudent to PR against LATS Core so that they can be integrated
 quickly.  Cosmetic changes should be purely taken upstream.
 
-There is a tool in `test/lint/git-subtree-check.sh` to check a subtree directory for consistency with
+There is a tool in `test/lint/git-subtree-check.sh` ([instructions](../test/lint#git-subtree-checksh)) to check a subtree directory for consistency with
 its upstream repository.
 
 Current subtrees include:
@@ -693,7 +739,7 @@ you must be aware of.
 
 In most configurations we use the default LevelDB value for `max_open_files`,
 which is 1000 at the time of this writing. If LevelDB actually uses this many
-file descriptors it will cause problems with PIVX's `select()` loop, because
+file descriptors it will cause problems with LATS's `select()` loop, because
 it may cause new sockets to be created where the fd value is >= 1024. For this
 reason, on 64-bit Unix systems we rely on an internal LevelDB optimization that
 uses `mmap()` + `close()` to open table files without actually retaining
@@ -704,7 +750,7 @@ In addition to reviewing the upstream changes in `env_posix.cc`, you can use `ls
 check this. For example, on Linux this command will show open `.ldb` file counts:
 
 ```bash
-$ lsof -p $(pidof pivxd) |\
+$ lsof -p $(pidof latsd) |\
     awk 'BEGIN { fd=0; mem=0; } /ldb$/ { if ($4 == "mem") mem++; else fd++ } END { printf "mem = %s, fd = %s\n", mem, fd}'
 mem = 119, fd = 0
 ```
@@ -801,7 +847,7 @@ Git and GitHub tips
 
         [remote "upstream-pull"]
                 fetch = +refs/pull/*:refs/remotes/upstream-pull/*
-                url = git@github.com:PIVX-Project/PIVX.git
+                url = git@github.com:Latscoin/LATS.git
 
   This will add an `upstream-pull` remote to your git repository, which can be fetched using `git fetch --all`
   or `git fetch upstream-pull`. Afterwards, you can use `upstream-pull/NUMBER/head` in arguments to `git show`,
@@ -862,7 +908,7 @@ A few guidelines for introducing and reviewing new RPC interfaces:
 - Try not to overload methods on argument type. E.g. don't make `getblock(true)` and `getblock("hash")`
   do different things.
 
-  - *Rationale*: This is impossible to use with `pivx-cli`, and can be surprising to users.
+  - *Rationale*: This is impossible to use with `lats-cli`, and can be surprising to users.
 
   - *Exception*: Some RPC calls can take both an `int` and `bool`, most notably when a bool was switched
     to a multi-value, or due to other historical reasons. **Always** have false map to 0 and
@@ -881,7 +927,7 @@ A few guidelines for introducing and reviewing new RPC interfaces:
 
 - Add every non-string RPC argument `(method, idx, name)` to the table `vRPCConvertParams` in `rpc/client.cpp`.
 
-  - *Rationale*: `pivx-cli` and the GUI debug console use this table to determine how to
+  - *Rationale*: `lats-cli` and the GUI debug console use this table to determine how to
     convert a plaintext command line to JSON. If the types don't match, the method can be unusable
     from there.
 
@@ -907,3 +953,16 @@ A few guidelines for introducing and reviewing new RPC interfaces:
   - *Exception*: Using RPC method aliases may be appropriate in cases where a
     new RPC is replacing a deprecated RPC, to avoid both RPCs confusingly
     showing up in the command list.
+
+- Wallet RPCs call BlockUntilSyncedToCurrentChain to maintain consistency with
+  `getblockchaininfo`'s state immediately prior to the call's execution. Wallet
+  RPCs whose behavior does *not* depend on the current chainstate may omit this
+  call.
+
+  - *Rationale*: In previous versions of Bitcoin Core, the wallet was always
+    in-sync with the chainstate (by virtue of them all being updated in the
+    same cs_main lock). In order to maintain the behavior that wallet RPCs
+    return results as of at least the highest best-known block an RPC
+    client may be aware of prior to entering a wallet RPC call, we must block
+    until the wallet is caught up to the chainstate as of the RPC call's entry.
+    This also makes the API much easier for RPC clients to reason about.

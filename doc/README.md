@@ -1,13 +1,13 @@
-Lats Core
+LATS Core
 =============
 
 Setup
 ---------------------
-[Lats Core](https://lats.cc//) is the original LATS client and it builds the backbone of the network. However, it downloads and stores the entire history of LATS transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more. Thankfully you only have to do this once.
+[LATS Core](http://lats.org/wallet) is the original LATS client and it builds the backbone of the network. However, it downloads and stores the entire history of LATS transactions; depending on the speed of your computer and network connection, the synchronization process can take anywhere from a few hours to a day or more. Thankfully you only have to do this once.
 
 Running
 ---------------------
-The following are some helpful notes on how to run Lats Core on your native platform.
+The following are some helpful notes on how to run LATS Core on your native platform.
 
 ### Unix
 
@@ -16,23 +16,26 @@ Unpack the files into a directory and run:
 - `bin/lats-qt` (GUI) or
 - `bin/latsd` (headless)
 
+If this is the first time running LATS Core (since v5.0.0), you'll need to install the sapling params by running the included `install-params.sh` script, which copies the two params files to `$HOME/.lats-params`
+
 ### Windows
 
 Unpack the files into a directory, and then run lats-qt.exe.
 
 ### macOS
 
-Drag Lats-Qt to your applications folder, and then run Lats-Qt.
+Drag LATS-Qt to your applications folder, and then run LATS-Qt.
 
 ### Need Help?
 
-* See the documentation at the [LATS Wiki](https://https://github.com/LATS-DAO/Lats-Core/)
+* See the documentation at the [LATS Wiki](https://github.com/lats-dao/lats-core/wiki)
 for help and more information.
-* Join our Discord server [Discord Server](https://discord.gg/Yqzpyuk5PJ)
+* Ask for help on [BitcoinTalk](https://bitcointalk.org/index.php?topic=1262920.0) or on the [LATS Forum](http://lats.cc/).
+* Join our Discord server [Discord Server](https://discord.gg/cGsXc3gKeQ)
 
 Building
 ---------------------
-The following are developer notes on how to build Lats Core on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
+The following are developer notes on how to build LATS Core on your native platform. They are not complete guides, but include notes on the necessary libraries, compile flags, etc.
 
 - [Dependencies](dependencies.md)
 - [macOS Build Notes](build-osx.md)
@@ -48,19 +51,21 @@ The LATS repo's [root README](/README.md) contains relevant information on the d
 - [Multiwallet Qt Development](multiwallet-qt.md)
 - [Release Notes](release-notes.md)
 - [Release Process](release-process.md)
-- [Source Code Documentation (External Link)](https://https://github.com/LATS-DAO/Lats-Core/)
+- [Source Code Documentation (External Link)](https://www.fuzzbawls.pw/lats/doxygen/)
 - [Translation Process](translation_process.md)
 - [Unit Tests](unit-tests.md)
 - [Unauthenticated REST Interface](REST-interface.md)
 - [Dnsseed Policy](dnsseed-policy.md)
 
 ### Resources
-* Discuss on the [LATS Homepage](https://lats.cc//).
-* Join the [LATS Discord](https://discord.gg/Yqzpyuk5PJ).
+* Discuss on the [BitcoinTalk](https://bitcointalk.org/index.php?topic=1262920.0) or the [LATS](http://lats.cc/) forum.
+* Join the [LATS Discord](https://discord.gg/cGsXc3gKeQ).
 
 ### Miscellaneous
 - [Assets Attribution](assets-attribution.md)
 - [Files](files.md)
+- [Fuzz-testing](fuzzing.md)
+- [Reduce Memory](reduce-memory.md)
 - [Tor Support](tor.md)
 - [Init Scripts (systemd/upstart/openrc)](init.md)
 
