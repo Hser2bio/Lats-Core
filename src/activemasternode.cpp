@@ -78,11 +78,18 @@ void CActiveMasternode::ManageStatus()
 
         LogPrintf("CActiveMasternode::ManageStatus() - Checking inbound connection to '%s'\n", service.ToString());
 
-        CAddress addr(service, NODE_NETWORK);
-        if (!g_connman->OpenNetworkConnection(addr, true, nullptr)) {
-            notCapableReason = "Could not connect to " + service.ToString();
-            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
-            return;
+        if (!Params().IsRegTestNet()) {
+            // Check socket connectivity
+            const std::string& strService = info.service.ToString();
+            LogPrintf("%s: Checking inbound connection to '%s'\n", __func__, strService);
+            SOCKET hSocket;
+            bool fConnected = ConnectSocketDirectly(info.service, hSocket, nConnectTimeout) && IsSelectableSocket(hSocket);
+            CloseSocket(hSocket);
+
+            if (!fConnected) {
+                LogPrintf("%s ERROR: Could not connect to %s\n", __func__, strService);
+                return;
+            }
         }
 
         notCapableReason = "Waiting for start message from controller.";
