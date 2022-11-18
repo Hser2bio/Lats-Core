@@ -59,18 +59,6 @@ void CActiveMasternode::ManageStatus()
         status = ACTIVE_MASTERNODE_NOT_CAPABLE;
         notCapableReason = "";
 
-        if (pwalletMain->IsLocked()) {
-            notCapableReason = "Wallet is locked.";
-            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
-            return;
-        }
-
-        if (pwalletMain->GetAvailableBalance() == 0) {
-            notCapableReason = "Hot node, waiting for remote activation.";
-            LogPrintf("CActiveMasternode::ManageStatus() - not capable: %s\n", notCapableReason);
-            return;
-        }
-
         if (strMasterNodeAddr.empty()) {
             if (!GetLocal(service)) {
                 notCapableReason = "Can't detect external address. Please use the masternodeaddr configuration option.";

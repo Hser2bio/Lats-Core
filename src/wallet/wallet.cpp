@@ -1871,7 +1871,7 @@ CWallet::OutputAvailabilityResult CWallet::CheckOutputAvailability(
 {
     OutputAvailabilityResult res;
 
-    // Check for only 10k utxo
+    // Check for only 1k utxo
     if (nCoinType == ONLY_10000 && output.nValue != 1000 * COIN) return res;
 
     // Check if the utxo was spent.
