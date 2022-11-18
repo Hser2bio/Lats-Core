@@ -468,12 +468,14 @@ bool static Socks5(std::string strDest, int port, const ProxyCredentials *auth, 
     return true;
 }
 
-bool static ConnectSocketDirectly(const CService& addrConnect, SOCKET& hSocketRet, int nTimeout)
+bool ConnectSocketDirectly(const CService& addrConnect, SOCKET& hSocketRet, int nTimeout)
 {
-    hSocketRet = INVALID_SOCKET;
-
     struct sockaddr_storage sockaddr;
     socklen_t len = sizeof(sockaddr);
+    if (hSocketRet == INVALID_SOCKET) {
+        LogPrintf("Cannot connect to %s: invalid socket\n", addrConnect.ToString());
+        return false;
+    }
     if (!addrConnect.GetSockAddr((struct sockaddr*)&sockaddr, &len)) {
         LogPrintf("Cannot connect to %s: unsupported network\n", addrConnect.ToString());
         return false;

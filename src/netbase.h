@@ -54,6 +54,7 @@ bool Lookup(const char* pszName, std::vector<CService>& vAddr, int portDefault, 
 CService LookupNumeric(const char* pszName, int portDefault = 0);
 bool LookupSubNet(const char* pszName, CSubNet& subnet);
 bool ConnectSocket(const CService& addr, SOCKET& hSocketRet, int nTimeout, bool* outProxyConnectionFailed = 0);
+bool ConnectSocketDirectly(const CService& addrConnect, const SOCKET& hSocketRet, int nTimeout, bool manual_connection);
 bool ConnectSocketByName(CService& addr, SOCKET& hSocketRet, const char* pszDest, int portDefault, int nTimeout, bool* outProxyConnectionFailed = 0);
 /** Return readable error string for a network error code */
 std::string NetworkErrorString(int err);

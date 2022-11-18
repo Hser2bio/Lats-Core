@@ -80,10 +80,10 @@ void CActiveMasternode::ManageStatus()
 
         if (!Params().IsRegTestNet()) {
             // Check socket connectivity
-            const std::string& strService = info.service.ToString();
+            const std::string& strService = service.ToString();
             LogPrintf("%s: Checking inbound connection to '%s'\n", __func__, strService);
             SOCKET hSocket;
-            bool fConnected = ConnectSocketDirectly(info.service, hSocket, nConnectTimeout) && IsSelectableSocket(hSocket);
+            bool fConnected = ConnectSocketDirectly(service, hSocket, nConnectTimeout) && IsSelectableSocket(hSocket);
             CloseSocket(hSocket);
 
             if (!fConnected) {
