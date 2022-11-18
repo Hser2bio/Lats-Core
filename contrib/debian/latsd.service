@@ -5,17 +5,17 @@
 # See "man systemd.service" for details.
 
 # Note that almost all daemon options could be specified in
-# /etc/pivx/lats.conf
+# /etc/lats/lats.conf
 
 [Unit]
-Description=Lats daemon
+Description=LATS daemon
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/latsd -daemon -datadir=/var/lib/pivx -conf=/etc/pivx/lats.conf -pid=/run/latsd/latsd.pid
-# Creates /run/latsd owned by pivx
+ExecStart=/usr/bin/latsd -daemon -datadir=/var/lib/lats -conf=/etc/lats/lats.conf -pid=/run/latsd/latsd.pid
+# Creates /run/latsd owned by lats
 RuntimeDirectory=latsd
-User=pivx
+User=lats
 Type=forking
 PIDFile=/run/latsd/latsd.pid
 Restart=on-failure

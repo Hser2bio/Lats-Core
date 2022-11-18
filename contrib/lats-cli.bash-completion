@@ -14,7 +14,7 @@ _lats_rpc() {
                 ;;
         esac
     done
-    $_latscli "${rpcargs[@]}" "$@"
+    $lats_cli "${rpcargs[@]}" "$@"
 }
 
 # Add wallet accounts to COMPREPLY
@@ -26,11 +26,11 @@ _lats_accounts() {
 
 _lats_cli() {
     local cur prev words=() cword
-    local _latscli
+    local lats_cli
 
     # save and use original argument to invoke lats-cli for -help, help and RPC
     # as lats-cli might not be in $PATH
-    _latscli="$1"
+    lats_cli="$1"
 
     COMPREPLY=()
     _get_comp_words_by_ref -n = cur prev words cword
@@ -125,7 +125,7 @@ _lats_cli() {
 
             # only parse -help if senseful
             if [[ -z "$cur" || "$cur" =~ ^- ]]; then
-                helpopts=$($_latscli -help 2>&1 | awk '$1 ~ /^-/ { sub(/=.*/, "="); print $1 }' )
+                helpopts=$($lats_cli -help 2>&1 | awk '$1 ~ /^-/ { sub(/=.*/, "="); print $1 }' )
             fi
 
             # only parse help if senseful

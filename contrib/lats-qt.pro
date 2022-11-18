@@ -84,12 +84,14 @@ HEADERS += src/activemasternode.h \
            src/ecwrapper.h \
            src/hash.h \
            src/init.h \
+           src/swifttx.h \
            src/keepass.h \
            src/key.h \
            src/keystore.h \
            src/leveldbwrapper.h \
            src/limitedmap.h \
            src/main.h \
+           src/masternode-budget.h \
            src/masternode-payments.h \
            src/masternode-sync.h \
            src/masternode.h \
@@ -131,8 +133,6 @@ HEADERS += src/activemasternode.h \
            src/compat/sanity.h \
            src/config/lats-config.h \
            src/crypto/common.h \
-           src/crypto/google_authenticator.h \
-           src/crypto/hmac_sha1.h \
            src/crypto/hmac_sha256.h \
            src/crypto/hmac_sha512.h \
            src/crypto/rfc6979_hmac_sha256.h \
@@ -382,11 +382,13 @@ SOURCES += src/activemasternode.cpp \
            src/editaddressdialog.cpp \
            src/hash.cpp \
            src/init.cpp \
+           src/swifttx.cpp \
            src/keepass.cpp \
            src/key.cpp \
            src/keystore.cpp \
            src/leveldbwrapper.cpp \
            src/main.cpp \
+           src/masternode-budget.cpp \
            src/masternode-payments.cpp \
            src/masternode-sync.cpp \
            src/masternode.cpp \
@@ -405,6 +407,7 @@ SOURCES += src/activemasternode.cpp \
            src/rpcblockchain.cpp \
            src/rpcclient.cpp \
            src/rpcdump.cpp \
+           src/rpcmasternode-budget.cpp \
            src/rpcmasternode.cpp \
            src/rpcmining.cpp \
            src/rpcmisc.cpp \
@@ -437,8 +440,6 @@ SOURCES += src/activemasternode.cpp \
            src/crypto/cubehash.c \
            src/crypto/echo.c \
            src/crypto/groestl.c \
-           src/crypto/google_authenticator.cpp \
-           src/crypto/hmac_sha1.cpp \
            src/crypto/hmac_sha256.cpp \
            src/crypto/hmac_sha512.cpp \
            src/crypto/jh.c \
@@ -470,7 +471,7 @@ SOURCES += src/activemasternode.cpp \
            src/qt/csvmodelwriter.cpp \
            src/qt/obfuscationconfig.cpp \
            src/qt/lats.cpp \
-           src/qt/pivxstrings.cpp \
+           src/qt/latsstrings.cpp \
            src/qt/editaddressdialog.cpp \
            src/qt/guiutil.cpp \
            src/qt/intro.cpp \
@@ -639,24 +640,24 @@ SOURCES += src/activemasternode.cpp \
            src/leveldb/helpers/memenv/memenv.cc \
            src/leveldb/helpers/memenv/memenv_test.cc \
            src/secp256k1/src/java/org_bitcoin_NativeSecp256k1.c
-RESOURCES += src/qt/lats.qrc src/qt/pivx_locale.qrc
+RESOURCES += src/qt/lats.qrc src/qt/lats_locale.qrc
 
-TRANSLATIONS += src/qt/locale/pivx_bg.ts \
-                src/qt/locale/pivx_de.ts \
-                src/qt/locale/pivx_en.ts \
-                src/qt/locale/pivx_es.ts \
-                src/qt/locale/pivx_fi.ts \
-                src/qt/locale/pivx_fr.ts \
-                src/qt/locale/pivx_it.ts \
-                src/qt/locale/pivx_ja.ts \
-                src/qt/locale/pivx_pl.ts \
-                src/qt/locale/pivx_pt.ts \
-                src/qt/locale/pivx_ru.ts \
-                src/qt/locale/pivx_sk.ts \
-                src/qt/locale/pivx_sv.ts \
-                src/qt/locale/pivx_vi.ts \
-                src/qt/locale/pivx_zh_CN.ts \
-                src/qt/locale/pivx_zh_TW.ts
+TRANSLATIONS += src/qt/locale/lats_bg.ts \
+                src/qt/locale/lats_de.ts \
+                src/qt/locale/lats_en.ts \
+                src/qt/locale/lats_es.ts \
+                src/qt/locale/lats_fi.ts \
+                src/qt/locale/lats_fr.ts \
+                src/qt/locale/lats_it.ts \
+                src/qt/locale/lats_ja.ts \
+                src/qt/locale/lats_pl.ts \
+                src/qt/locale/lats_pt.ts \
+                src/qt/locale/lats_ru.ts \
+                src/qt/locale/lats_sk.ts \
+                src/qt/locale/lats_sv.ts \
+                src/qt/locale/lats_vi.ts \
+                src/qt/locale/lats_zh_CN.ts \
+                src/qt/locale/lats_zh_TW.ts
 
 DISTFILES += \
     README.md

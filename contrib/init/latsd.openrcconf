@@ -1,7 +1,7 @@
 # /etc/conf.d/latsd: config file for /etc/init.d/latsd
 
 # Config file location
-#BITCOIND_CONFIGFILE="/etc/pivx/lats.conf"
+#BITCOIND_CONFIGFILE="/etc/lats/lats.conf"
 
 # What directory to write pidfile to?  (created and owned by $BITCOIND_USER)
 #BITCOIND_PIDDIR="/var/run/latsd"

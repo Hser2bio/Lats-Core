@@ -8,7 +8,7 @@ architectures:
 packages:
 - "faketime"
 remotes:
-- "url": "https://github.com/lats-project/lats-detached-sigs.git"
+- "url": "https://github.com/lats-dao/lats-core-detached-sigs.git"
   "dir": "signature"
 files:
 - "lats-osx-unsigned.tar.gz"
@@ -17,7 +17,7 @@ script: |
 
   WRAP_DIR=$HOME/wrapped
   mkdir -p ${WRAP_DIR}
-  export PATH=`pwd`:$PATH
+  export PATH="$PWD":$PATH
   FAKETIME_PROGS="dmg genisoimage"
 
   # Create global faketime wrappers

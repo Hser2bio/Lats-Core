@@ -1,4 +1,4 @@
-Source: LATS
+Source: lats
 Section: utils
 Priority: optional
 Maintainer: Fuzzbawls <fuzzbawls@gmail.com>
@@ -28,9 +28,9 @@ Build-Depends: debhelper,
  libzmq3-dev,
  dh-systemd
 Standards-Version: 3.9.2
-Homepage: https://lats.cc/
-Vcs-Git: git://https://github.com/LATS-DAO/Lats-Core.git
-Vcs-Browser: https://https://github.com/LATS-DAO/Lats-Core
+Homepage: http://lats.cc
+Vcs-Git: git://github.com/lats-dao/lats-core.git
+Vcs-Browser: http://github.com/lats-dao/lats-core
 
 Package: latsd
 Architecture: any

@@ -1,6 +1,6 @@
 [Protocol]
 exec=lats-qt '%u'
-protocol=pivx
+protocol=lats
 input=none
 output=none
 helper=true
