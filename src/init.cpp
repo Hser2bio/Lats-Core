@@ -46,6 +46,7 @@
 #include "util.h"
 #include "utilmoneystr.h"
 #include "util/threadnames.h"
+#include "validation.h"
 #include "validationinterface.h"
 
 #ifdef ENABLE_WALLET
@@ -1677,7 +1678,7 @@ bool AppInit2()
 
     if (fMasterNode) {
         LogPrintf("IS MASTER NODE\n");
-        auto res = initMasternode(gArgs.GetArg("-masternodeprivkey", ""), gArgs.GetArg("-masternodeaddr", ""), true);
+        auto res = initMasternode(GetArg("-masternodeprivkey", ""), GetArg("-masternodeaddr", ""), true);
         if (!res) UIError(res.getError());
     }
 
