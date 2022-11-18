@@ -145,6 +145,7 @@ BITCOIN_CORE_H = \
   policy/fees.h \
   policy/policy.h \
   optional.h \
+  operationresult.h \
   pow.h \
   prevector.h \
   protocol.h \

@@ -491,7 +491,7 @@ bool CMasternodeBroadcast::Create(std::string strService, std::string strKeyMast
         return false;
     }
 
-    int nPort;
+    int nPort = 0;
     int nDefaultPort = Params().GetDefaultPort();
     std::string strHost;
     SplitHostPort(strService, nPort, strHost);
@@ -727,13 +727,17 @@ bool CMasternodeBroadcast::CheckInputsAndAdd(int& nDoS)
     // we are a masternode with the same vin (i.e. already activated) and this mnb is ours (matches our Masternode privkey)
     // so nothing to do here for us
     if (fMasterNode && activeMasternode.vin != nullopt &&
-            vin.prevout == activeMasternode.vin->prevout && pubKeyMasternode == activeMasternode.pubKeyMasternode)
+            vin.prevout == activeMasternode.vin->prevout &&
+            pubKeyMasternode == activeMasternode.pubKeyMasternode &&
+            activeMasternode.GetStatus() == ACTIVE_MASTERNODE_STARTED) {
         return true;
+    }
 
     // incorrect ping or its sigTime
     if(lastPing.IsNull() || !lastPing.CheckAndUpdate(nDoS, false, true)) {
         return false;
     }
+
     // search existing Masternode list
     CMasternode* pmn = mnodeman.Find(vin);
 
@@ -917,19 +921,8 @@ bool CMasternodePing::CheckAndUpdate(int& nDos, bool fRequireEnabled, bool fChec
                 return false;
             }
 
-            // Verify ping block hash in main chain and in the [ tip > x > tip - 24 ] range.
-            {
-                LOCK(cs_main);
-                if (!chainActive.Contains((*mi).second) || (chainActive.Height() - (*mi).second->nHeight > 24)) {
-                    LogPrint(BCLog::MNPING,"%s: Masternode %s block hash %s is too old or has an invalid block hash\n",
-                            __func__, vin.prevout.hash.ToString(), blockHash.ToString());
-                    // Do nothing here (no Masternode update, no mnping relay)
-                    // Let this node to be visible but fail to accept mnping
-                    return false;
-                }
-            }
-
-            pmn->lastPing = *this;
+            // SetLastPing locks masternode cs. Be careful with the lock ordering.
+            pmn->SetLastPing(*this);
 
             //mnodeman.mapSeenMasternodeBroadcast.lastPing is probably outdated, so we'll update it
             CMasternodeBroadcast mnb(*pmn);
