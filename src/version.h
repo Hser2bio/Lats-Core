@@ -11,17 +11,17 @@
  * network protocol versioning
  */
 
-static const int PROTOCOL_VERSION = 70101;
+static const int PROTOCOL_VERSION = 70102;
 
 //! initial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
 
 //! disconnect from peers older than this proto version
-static const int MIN_PEER_PROTO_VERSION_BEFORE_ENFORCEMENT = 70100;
-static const int MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT = 70101;
+static const int MIN_PEER_PROTO_VERSION_BEFORE_ENFORCEMENT = 70101;
+static const int MIN_PEER_PROTO_VERSION_AFTER_ENFORCEMENT = 70102;
 
 //! Version where BIP155 was introduced
-static const int MIN_BIP155_PROTOCOL_VERSION = 70923;
+static const int MIN_BIP155_PROTOCOL_VERSION = 70100;
 
 // Make sure that none of the values above collide with
 // `ADDRV2_FORMAT`.
