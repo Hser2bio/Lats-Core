@@ -169,8 +169,8 @@ public:
                 Consensus::NetworkUpgrade::ALWAYS_ACTIVE;
         consensus.vUpgrades[Consensus::UPGRADE_TESTDUMMY].nActivationHeight =
                 Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT;
-        consensus.vUpgrades[Consensus::UPGRADE_POS].nActivationHeight           = 2001;
-        consensus.vUpgrades[Consensus::UPGRADE_POS_V2].nActivationHeight        = 2051;
+        consensus.vUpgrades[Consensus::UPGRADE_POS].nActivationHeight           = 1001;
+        consensus.vUpgrades[Consensus::UPGRADE_POS_V2].nActivationHeight        = 1051;
         consensus.vUpgrades[Consensus::UPGRADE_ZC].nActivationHeight            = 
                 Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT;
         consensus.vUpgrades[Consensus::UPGRADE_ZC_V2].nActivationHeight         = 
@@ -178,9 +178,9 @@ public:
         consensus.vUpgrades[Consensus::UPGRADE_BIP65].nActivationHeight         = 250; //Block v5
         consensus.vUpgrades[Consensus::UPGRADE_ZC_PUBLIC].nActivationHeight     = 
                 Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT;
-        consensus.vUpgrades[Consensus::UPGRADE_V3_4].nActivationHeight          = 2100; //StakeModV2 Block v6
-        consensus.vUpgrades[Consensus::UPGRADE_V4_0].nActivationHeight          = 2200; //Time ProtocolV2 Cold Staking Block v7
-        consensus.vUpgrades[Consensus::UPGRADE_V5_0].nActivationHeight          = 2300; // Sapling Block v8
+        consensus.vUpgrades[Consensus::UPGRADE_V3_4].nActivationHeight          = 1100; //StakeModV2 Block v6
+        consensus.vUpgrades[Consensus::UPGRADE_V4_0].nActivationHeight          = 1200; //Time ProtocolV2 Cold Staking Block v7
+        consensus.vUpgrades[Consensus::UPGRADE_V5_0].nActivationHeight          = 1300; // Sapling Block v8
         consensus.vUpgrades[Consensus::UPGRADE_V5_2].nActivationHeight          = 
                 Consensus::NetworkUpgrade::NO_ACTIVATION_HEIGHT;                        // No point yet
         consensus.vUpgrades[Consensus::UPGRADE_V5_3].nActivationHeight          = 
