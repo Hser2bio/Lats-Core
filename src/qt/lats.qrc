@@ -182,7 +182,7 @@
         <file alias="img-empty-staking-off">lats/res/img/img-empty-staking-off.svg</file>
         <file alias="img-empty-staking-on">lats/res/img/img-empty-staking-on.svg</file>
         <file alias="img-empty-transactions">lats/res/img/img-empty-transactions.svg</file>
-        <file alias="img-nav-logo">lats/res/img/img-nav-logo.svg</file>
+        <file alias="img-nav-logo">lats/res/img/img-nav-logo.png</file>
         <file alias="img-qr">lats/res/img/img-qr.svg</file>
         <file alias="ic-contact-arrow-down">lats/res/img/ic-contact-arrow-down.svg</file>
         <file alias="ic-contact-arrow-down-white">lats/res/img/ic-contact-arrow-down-white.svg</file>
